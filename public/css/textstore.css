@@ -1,0 +1,139 @@
+html {
+	overflow-y: scroll;
+}
+
+body {
+	margin: 0;
+}
+
+p, td, ul {
+	line-height: 125%;
+}
+
+img {
+	border: 0 none;
+}
+
+div#top {
+	height: 60px;
+	margin: auto;
+	width: 100%;
+}
+
+div#textdata {
+	width: 100%;
+	white-space: pre-wrap;
+	border: 1
+}
+
+div#topnav {
+	background-color: #d3d3d3;
+	height: 25px;
+	width: 100%;
+}
+
+div#centerpage {
+    background-color: #ffffff;
+    border-radius: 4px;
+    box-shadow: 0 0 20px 3px #d3d3d3;
+    float: left;
+    margin-left: 10px;
+    margin-top: 10px;
+    padding-bottom: 20px;
+    padding-top: 10px;
+    width: 99%;
+}
+
+div#leftcolumn {
+    float: left;
+    margin-left: 10px;
+    margin-right: 4px;
+    width: 170px;
+}
+
+div#main {
+    overflow: auto;
+    padding: 0 7px 7px;
+}
+
+div#footer {
+    color: #909090;
+    font-size: 11px;
+    margin: auto;
+    padding-left: 30px;
+    padding-right: 150px;
+    text-align: center;
+    width: 100%;
+    float: left;
+}
+
+div.gallery {
+	width: 900px;
+}
+
+div.galleryimg {
+    margin: 5px;
+    padding: 5px;
+    height: 150px;
+    width: 150px;
+    float: left;
+    text-align: center;
+}
+
+div#galleryimg img {
+    display: inline;
+    margin: 5px;
+    border: 1px solid #ffffff;
+}
+
+div#galleryimg a:hover img {
+    border:1px solid #0000ff;
+}
+
+div.seriesimg {
+    margin: 5px;
+    padding: 5px;
+    height: 200px;
+    width: 150px;
+    float: left;
+    text-align: center;
+}
+
+div#seriesimg img {
+    display: inline;
+    margin: 5px;
+    border: 1px solid #ffffff;
+}
+
+div#pagination {
+	float: right;
+	text-align: center;
+	clear: both;
+}
+
+div.imagedetail {
+	font-size: 0.875em;
+}
+
+.add-button {
+    background-image: url(/images/add-sm.png);
+    background-size: 100%;
+    background-repeat:no-repeat;
+    width: 15px;
+    height: 15px;
+    border: 0 none;
+    cursor: pointer;
+    float: right;
+}
+
+.delete-button {
+    float: right;
+    width: 15px;
+    height: 15px;
+    border: 0 none;
+    cursor: pointer;
+}
+
+div.delete {
+	margin-top: 100px;
+}

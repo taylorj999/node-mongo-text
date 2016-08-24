@@ -1,0 +1,11 @@
+{% extends 'frametemplate.html' %}
+
+{% block title %}Welcome{% endblock %}
+
+{% block main %}
+	<div id="alert">{{error}}</div>
+	<div id="welcome">
+		Welcome to the node-mongo-text bookshelf, whose name generally sums up precisely what it's about.
+		You can begin searching the file contents using the search box in the left nav.
+	</div>	
+{% endblock %}

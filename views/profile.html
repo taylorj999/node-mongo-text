@@ -1,0 +1,23 @@
+{% extends 'gallerytemplate.html' %}
+
+{% block title %}Account Profile{% endblock %}
+
+{% block main %}
+	<div id="alert">{{error}}</div>
+	<div class="row">
+
+		<!-- LOCAL INFORMATION -->
+		<div class="col-sm-6">
+			<div class="well">
+				<h3><span class="fa fa-user"></span> Local</h3>
+
+					<p>
+						<strong>id</strong>: {{user._id.toString()}}<br>
+						<strong>email</strong>: {{user.local.email}}<br>
+						<strong>password</strong>: {{user.local.password}}
+					</p>
+
+			</div>
+		</div>
+	</div>
+{% endblock %}

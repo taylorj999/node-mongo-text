@@ -1,0 +1,44 @@
+{% extends 'frametemplate.html' %}
+
+{% block title %}Search Results{% endblock %}
+
+{% block header %}
+<script type="text/javascript" src="/js/jquery.simplePagination.js"></script>
+<link rel="stylesheet" href="/css/simplePagination.css"/>
+<script language="JavaScript">
+$( document ).ready(function() {
+    $("#pagination").pagination({
+        items: {{count}},
+        itemsOnPage: {{config.resultsPerPage}},
+        cssStyle: 'light-theme',
+        currentPage: $('input[name="page"]').val(),
+        onPageClick: function (pageNum) {
+        	$('input[name="page"]').val(pageNum);
+        	document.forms.search.submit();
+        }
+    });
+});
+</script>
+{% endblock %}
+
+{% block leftcolumn %}
+	<div class="taglist">
+	{% for tag in taglist.sort() %}
+		<div class="tag" id="{{tag}}"><a href="/search?tags={{tag}}&page=1">{{tag}}</a></div>
+	{% endfor %}
+	</div>
+{% endblock %}
+
+{% block main %}
+	<div id="alert">{{error}}</div>
+	<div class="gallery">
+	{% for textdata in searchresults %}
+		<div class="galleryimg">
+			<a href="/document?id={{textdata._id.toString()}}">
+			{{textdata.title}}
+			</a>
+		</div>
+	{% endfor %}
+		<div class="pagination" id="pagination"/>
+	</div>
+{% endblock %}
