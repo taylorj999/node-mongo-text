@@ -1,4 +1,5 @@
 var Textstore = require('./textstore').Textstore
+   ,striptags = require('striptags')
    ,config = require('../config/config')
    ,validator = require('validator')
    ,sanitizers = require('../config/sanitizers');
@@ -80,6 +81,11 @@ module.exports = exports = function(app, db, passport) {
 			gallery.getStoryChapter(sanitize(req.query.story).toLowerCase()
 					              ,sanitize(req.query.chapter)
 					              ,function(err,result) {
+									if (result) {
+										if (result.current !== undefined) {
+											result.current = striptags(result.current);
+										}
+									}
 									if (err) {
 										res.render('document',{'error':err.message
 											               ,'textdata':result
@@ -95,6 +101,11 @@ module.exports = exports = function(app, db, passport) {
 			});
 		} else {
 			textstore.getDocument(sanitize(req.query.id).toLowerCase(), function(err,result) {
+				if (result) {
+					if (result.current !== undefined) {
+						result.current = striptags(result.current);
+					}
+				}
 				if (err) {
 					res.render('document',{'error':err.message
 								   	   ,'textdata':result
@@ -117,6 +128,11 @@ module.exports = exports = function(app, db, passport) {
 			res.render('editdoc',{'error':'Invalid parameter error'});
 		}  else {
 			textstore.getDocument(sanitize(req.body.id).toLowerCase(), function(err,result) {
+				if (result) {
+					if (result.current !== undefined) {
+						result.current = striptags(result.current);
+					}
+				}
 				if (err) {
 					res.render('editdoc',{'error':err.message
 								   	   ,'textdata':result
@@ -138,6 +154,11 @@ module.exports = exports = function(app, db, passport) {
 			res.render('editdoc',{'error':'Invalid parameter error'});
 		}  else {
 			textstore.getDocument(sanitize(req.query.id).toLowerCase(), function(err,result) {
+				if (result) {
+					if (result.current !== undefined) {
+						result.current = striptags(result.current);
+					}
+				}
 				if (err) {
 					res.render('editdoc',{'error':err.message
 								   	   ,'textdata':result
@@ -162,6 +183,11 @@ module.exports = exports = function(app, db, passport) {
 			textstore.updateDocument(sanitize(req.body.id).toLowerCase(),
 									 req.body.textdata,
 									 function(err, result) {
+				if (result) {
+					if (result.current !== undefined) {
+						result.current = striptags(result.current);
+					}
+				}
 				if (err) {
 					res.render('editdoc',{'error':err.message
 								   	   ,'textdata':result
@@ -186,6 +212,11 @@ module.exports = exports = function(app, db, passport) {
 		}  else {
 			textstore.revertDocument(sanitize(req.query.id).toLowerCase(),
 									 function(err, result) {
+				if (result) {
+					if (result.current !== undefined) {
+						result.current = striptags(result.current);
+					}
+				}
 				if (err) {
 					res.render('editdoc',{'error':err.message
 								   	   ,'textdata':result
