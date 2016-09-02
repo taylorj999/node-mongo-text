@@ -121,7 +121,7 @@ Textstore.prototype.buildQueryOptions = function buildQueryOptions(page,orderby,
 
 Textstore.prototype.getSearchResults = function getSearchResults(params, options, callback) {
 	var textdata = this.textdata;
-	var searchresults = textdata.find(params,{'title':true,'tags':true},options);
+	var searchresults = textdata.find(params,{'title':true,'tags':true,'summary':true},options);
 	searchresults.count(function(err,count) {
 		if (err) {
 			return callback(err);
@@ -156,7 +156,7 @@ Textstore.prototype.getDocument = function getDocument(text_id, callback) {
 	                    ,callback);
 };
 
-Textstore.prototype.updateDocument = function updateDocument(text_id, new_text, callback) {
+Textstore.prototype.updateDocument = function updateDocument(text_id, new_text, new_summary, callback) {
 	var textdata = this.textdata;
 	textdata.findOne({'_id':new ObjectId(text_id)}, function(err, document) {
 		if (err) {
@@ -165,7 +165,8 @@ Textstore.prototype.updateDocument = function updateDocument(text_id, new_text, 
 			old_text = document.current;
 			textdata.findAndModify({'_id':new ObjectId(text_id)}
 								  ,[]
-						          ,{'$set':{'current':new_text,'previous':old_text}}
+						          ,{'$set':{'current':new_text,'previous':old_text,
+						        	        'summary':new_summary, 'new':false}}
 								  ,{'new':true}
 						          ,callback);
 		}
@@ -187,6 +188,20 @@ Textstore.prototype.revertDocument = function updateDocument(text_id, callback) 
 						          ,callback);
 		}
 	});
+};
+
+Textstore.prototype.addTag = function addTag(text_id, tag, callback) {
+	this.textdata.update({'_id':new ObjectId(text_id)}
+	                  ,{'$addToSet':{'tags':tag},'$set':{'new':false}}
+	                  ,{}
+	                  ,callback);
+};
+
+Textstore.prototype.removeTag = function removeTag(text_id, tag, callback) {
+	this.textdata.update({'_id':new ObjectId(text_id)}
+    				   ,{'$pull':{'tags':tag},'$set':{'new':false}}
+    				   ,{}
+    				   ,callback);
 };
 
 module.exports.Textstore = Textstore;

@@ -182,6 +182,7 @@ module.exports = exports = function(app, db, passport) {
 		}  else {
 			textstore.updateDocument(sanitize(req.body.id).toLowerCase(),
 									 req.body.textdata,
+									 req.body.textsummary,
 									 function(err, result) {
 				if (result) {
 					if (result.current !== undefined) {
@@ -233,6 +234,50 @@ module.exports = exports = function(app, db, passport) {
 			});
 		}
 	});
+	
+	app.get('/addtag-api', function(req,res) {
+		if ((req.query.id === undefined)||(req.query.newtag === undefined)) {
+			res.jsonp({'status':'error','error':'Invalid parameter error.'});
+			return;
+		} else if (config.system.reservedTags.indexOf(sanitize(req.query.newtag).toLowerCase()) >= 0) {
+			res.jsonp({'status':'error','error':'Reserved keyword.'});
+			return;
+		} else {
+			var textstore = new Textstore(db);
+			textstore.addTag(sanitize(req.query.id).toLowerCase()
+					      ,sanitize(req.query.newtag).toLowerCase()
+					      ,function(err) {
+				if (err) {
+					res.jsonp({'status':'error','error':err.message});
+					return;
+				} else {
+					res.jsonp({'status':'success','tag':sanitize(req.query.newtag).toLowerCase()});
+					return;
+				} 
+			});
+		}
+	});
+
+	app.get('/removetag-api', function(req,res) {
+		if ((req.query.id === undefined)||(req.query.tag === undefined)) {
+			res.jsonp({'status':'error','error':'Invalid parameter error.'});
+			return;
+		} else {
+			var textstore = new Textstore(db);
+			textstore.removeTag(sanitize(req.query.id).toLowerCase()
+					         ,sanitize(req.query.tag).toLowerCase()
+					         ,function(err) {
+				if (err) {
+					res.jsonp({'status':'error','error':err.message});
+					return;
+				} else {
+					res.jsonp({'status':'success', 'tag':sanitize(req.query.tag)});
+					return;
+				} 
+			});
+		}
+	});
+
 };
 
 

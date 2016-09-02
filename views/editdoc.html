@@ -4,6 +4,7 @@
 
 {% block header %}
 <script type="text/javascript" src="/js/rtf-converters.js"></script>
+<script type="text/javascript" src="/js/edit-api.js"></script>
 <script type="text/javascript">
 	function removeRTF() {
 		textConverter = new TextConverter();
@@ -81,6 +82,9 @@
 	</div>
 	<form name="editdoc" method="post" action="/save">
 		<input type="hidden" name="id" value="{{textdata._id.toString()}}"/>
+	<div id="edittextsummary">
+		<textarea name="textsummary" rows="5" cols="80">{{textdata.summary}}</textarea>
+	</div>
 	<div id="textdata">
 		<textarea name="textdata" rows="20" cols="80">{{textdata.current}}</textarea>
 	</div>

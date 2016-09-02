@@ -31,12 +31,22 @@ $( document ).ready(function() {
 
 {% block main %}
 	<div id="alert">{{error}}</div>
-	<div class="gallery">
+	<div class="summarylist">
 	{% for textdata in searchresults %}
-		<div class="galleryimg">
-			<a href="/document?id={{textdata._id.toString()}}">
-			{{textdata.title}}
-			</a>
+		<div class="summaryitem">
+			<div class="summaryitemtitle">
+				<a href="/document?id={{textdata._id.toString()}}">
+				{{textdata.title}}
+				</a>
+			</div>
+			<div class="summaryitemsummary">
+				{{textdata.summary}}
+			</div>
+			{% if textdata.tags %}
+			<div class="summaryitemtags">
+			Tags: {{textdata.tags}}
+			</div>
+			{% endif %}
 		</div>
 	{% endfor %}
 		<div class="pagination" id="pagination"/>

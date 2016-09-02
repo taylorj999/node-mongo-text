@@ -67,27 +67,32 @@ div#footer {
     float: left;
 }
 
-div.gallery {
+div.summarylist {
 	width: 900px;
 }
 
-div.galleryimg {
+div.summaryitem {
     margin: 5px;
     padding: 5px;
-    height: 150px;
-    width: 150px;
+    width: 900px;
     float: left;
-    text-align: center;
+    text-align: left;
 }
 
-div#galleryimg img {
-    display: inline;
-    margin: 5px;
-    border: 1px solid #ffffff;
+div.summaryitemtitle {
+	text-align: left;
+	background-color: #BBBBBB;
 }
 
-div#galleryimg a:hover img {
-    border:1px solid #0000ff;
+div.summaryitemsummary {
+	text-align: left;
+	background-color: #CCCCCC;
+	margin-left: 25px;
+}
+
+div.summaryitemtags {
+	text-align: left;
+	margin-left: 25px;
 }
 
 div.seriesimg {
