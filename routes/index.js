@@ -94,12 +94,12 @@ module.exports = exports = function(app, db, passport) {
 									}
 									if (err) {
 										res.render('document',{'error':err.message
-											               ,'textdata':result
+											               ,'textdata':result.value
 											               ,'user':req.user
 											               ,'config':config.site});
 									    return;
 									} else {
-										res.render('document',{'textdata':result
+										res.render('document',{'textdata':result.value
 								                           ,'user':req.user
 								                           ,'config':config.site});
 										return;
@@ -114,12 +114,12 @@ module.exports = exports = function(app, db, passport) {
 				}
 				if (err) {
 					res.render('document',{'error':err.message
-								   	   ,'textdata':result
+								   	   ,'textdata':result.value
 								       ,'user':req.user
 								       ,'config':config.site});
 				    return;
 			    } else {
-				    res.render('document',{'textdata':result
+				    res.render('document',{'textdata':result.value
 								       ,'user':req.user
 								       ,'config':config.site});
 				    return;
@@ -141,12 +141,12 @@ module.exports = exports = function(app, db, passport) {
 				}
 				if (err) {
 					res.render('editdoc',{'error':err.message
-								   	   ,'textdata':result
+								   	   ,'textdata':result.value
 								       ,'user':req.user
 								       ,'config':config.site});
 				    return;
 			    } else {
-				    res.render('editdoc',{'textdata':result
+				    res.render('editdoc',{'textdata':result.value
 								       ,'user':req.user
 								       ,'config':config.site});
 				    return;
@@ -167,12 +167,12 @@ module.exports = exports = function(app, db, passport) {
 				}
 				if (err) {
 					res.render('editdoc',{'error':err.message
-								   	   ,'textdata':result
+								   	   ,'textdata':result.value
 								       ,'user':req.user
 								       ,'config':config.site});
 				    return;
 			    } else {
-				    res.render('editdoc',{'textdata':result
+				    res.render('editdoc',{'textdata':result.value
 								       ,'user':req.user
 								       ,'config':config.site});
 				    return;
@@ -197,13 +197,13 @@ module.exports = exports = function(app, db, passport) {
 				}
 				if (err) {
 					res.render('editdoc',{'error':err.message
-								   	   ,'textdata':result
+								   	   ,'textdata':result.value
 								       ,'user':req.user
 								       ,'config':config.site});
 				    return;
 			    } else {
 				    res.render('editdoc',{'message':'Changes saved.'
-				    					 ,'textdata':result
+				    					 ,'textdata':result.value
 								         ,'user':req.user
 								         ,'config':config.site});
 				    return;
@@ -226,13 +226,13 @@ module.exports = exports = function(app, db, passport) {
 				}
 				if (err) {
 					res.render('editdoc',{'error':err.message
-								   	   ,'textdata':result
+								   	   ,'textdata':result.value
 								       ,'user':req.user
 								       ,'config':config.site});
 				    return;
 			    } else {
 				    res.render('editdoc',{'message':'Changes reverted.'
-				    					 ,'textdata':result
+				    					 ,'textdata':result.value
 								         ,'user':req.user
 								         ,'config':config.site});
 				    return;

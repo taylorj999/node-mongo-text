@@ -155,10 +155,9 @@ Textstore.prototype.getSearchResults = function getSearchResults(params, options
 
 Textstore.prototype.getDocument = function getDocument(text_id, callback) {
 	var textdata = this.textdata;
-	textdata.findAndModify({'_id':new ObjectId(text_id)}
-	                    ,[]
+	textdata.findOneAndUpdate({'_id':new ObjectId(text_id)}
 	                    ,{'$set':{'last_viewed':new Date()}}
-	                    ,{'new':true}
+	                    ,{'returnOriginal':false}
 	                    ,callback);
 };
 
@@ -169,12 +168,11 @@ Textstore.prototype.updateDocument = function updateDocument(text_id, new_text, 
 			return callback(err);
 		} else {
 			old_text = document.current;
-			textdata.findAndModify({'_id':new ObjectId(text_id)}
-								  ,[]
-						          ,{'$set':{'current':new_text,'previous':old_text,
-						        	        'summary':new_summary, 'new':false}}
-								  ,{'new':true}
-						          ,callback);
+			textdata.findOneAndUpdate({'_id':new ObjectId(text_id)}
+						             ,{'$set':{'current':new_text,'previous':old_text,
+						        	           'summary':new_summary, 'new':false}}
+								     ,{'returnOriginal':false}
+						             ,callback);
 		}
 	});
 };
@@ -187,11 +185,10 @@ Textstore.prototype.revertDocument = function updateDocument(text_id, callback) 
 		} else {
 			old_text = document.current;
 			new_text = document.previous;
-			textdata.findAndModify({'_id':new ObjectId(text_id)}
-								  ,[]
-						          ,{'$set':{'current':new_text,'previous':old_text}}
-								  ,{'new':true}
-						          ,callback);
+			textdata.findOneAndUpdate({'_id':new ObjectId(text_id)}
+						             ,{'$set':{'current':new_text,'previous':old_text}}
+								     ,{'returnOriginal':false}
+						             ,callback);
 		}
 	});
 };
