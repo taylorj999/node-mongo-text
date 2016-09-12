@@ -45,6 +45,9 @@ module.exports = exports = function(app, db, passport) {
 		if (req.body.tags !== undefined) {
 			params.tags = sanitize(req.body.tags, sanitizers.allow_spaces).toLowerCase();
 		}
+		if (req.body.title !== undefined) {
+			params.title = sanitize(req.body.title, sanitizers.text_search);
+		}
 		if (req.body.page !== undefined) {
 			params.page = sanitize(req.body.page);
 		}
@@ -60,6 +63,9 @@ module.exports = exports = function(app, db, passport) {
 		var params = {};
 		if (req.query.tags !== undefined) {
 			params.tags = sanitize(req.query.tags, sanitizers.allow_spaces).toLowerCase();
+		}
+		if (req.body.title !== undefined) {
+			params.title = sanitize(req.query.title, sanitizers.text_search);
 		}
 		if (req.query.page !== undefined) {
 			params.page = sanitize(req.query.page);
@@ -284,6 +290,8 @@ module.exports = exports = function(app, db, passport) {
 function doSearch(query_params,req,res,db) {
 	var textstore = new Textstore(db);
 	var tags = null;
+	var title = null;
+	
 	if (query_params.tags !== undefined) {
 		if (query_params.tags.length > 0) {
 			tags = query_params.tags.split(" ");
@@ -300,8 +308,8 @@ function doSearch(query_params,req,res,db) {
 				query_params.sortby = "story";
 			}
 		}
-		textstore.buildQueryOptions(query_params.page, query_params.sortby, function(options) {
-			textstore.getSearchResults(params, options, function(err, data, count, taglist) {
+		textstore.buildQueryOptions(query_params.page, query_params.sortby, function(options, skip, limit) {
+			textstore.getSearchResults(params, options, skip, limit, function(err, data, count, taglist) {
 				if (err) {
 					res.render('searchresults',{'error':err.message 
 									 	,'images':{}

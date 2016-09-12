@@ -87,13 +87,13 @@ Textstore.prototype.covertTagsToParams = function convertParamsToQuery(tags, cal
 
 Textstore.prototype.buildQueryOptions = function buildQueryOptions(page,orderby,callback) {
 	var options = {};
-
-	options["limit"] = config.site.resultsPerPage;
+	var skip = 0;
+	var limit = config.site.resultsPerPage;
 	
 	if (page !== undefined) {
 		if (!isNaN(page)) {
 			if (page>0) {
-				options["skip"] = config.site.resultsPerPage * (page - 1);
+				skip = config.site.resultsPerPage * (page - 1);
 			}
 		}
 	}
@@ -116,10 +116,16 @@ Textstore.prototype.buildQueryOptions = function buildQueryOptions(page,orderby,
 		}
 	}
 	
-	callback(options);
+	callback(options, skip, limit);
 };
 
-Textstore.prototype.getSearchResults = function getSearchResults(params, options, callback) {
+// The skip and limit were moved to cursor operations as opposed to passing them as 
+// options to find() because of a weird behavior/bug in the NodeJS MongoDB v2.0.55 driver
+// that was not ignoring the skip() and limit() functions when doing a count() on the find
+// results.
+
+Textstore.prototype.getSearchResults = function getSearchResults(params, options, skip, 
+																 limit, callback) {
 	var textdata = this.textdata;
 	var searchresults = textdata.find(params,{'title':true,'tags':true,'summary':true},options);
 	searchresults.count(function(err,count) {
@@ -128,7 +134,7 @@ Textstore.prototype.getSearchResults = function getSearchResults(params, options
 		} else if (count===0) {
 			return callback(null,null,0);
 		} else {
-			searchresults.toArray(function(err,results) {
+			searchresults.skip(skip).limit(limit).toArray(function(err,results) {
 				if (err) {
 					return callback(err);
 				} else {
