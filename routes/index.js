@@ -45,8 +45,8 @@ module.exports = exports = function(app, db, passport) {
 		if (req.body.tags !== undefined) {
 			params.tags = sanitize(req.body.tags, sanitizers.allow_spaces).toLowerCase();
 		}
-		if (req.body.title !== undefined) {
-			params.title = sanitize(req.body.title, sanitizers.text_search);
+		if (req.body.fulltext !== undefined) {
+			params.fulltext = sanitize(req.body.fulltext, sanitizers.text_search);
 		}
 		if (req.body.page !== undefined) {
 			params.page = sanitize(req.body.page);
@@ -64,8 +64,8 @@ module.exports = exports = function(app, db, passport) {
 		if (req.query.tags !== undefined) {
 			params.tags = sanitize(req.query.tags, sanitizers.allow_spaces).toLowerCase();
 		}
-		if (req.body.title !== undefined) {
-			params.title = sanitize(req.query.title, sanitizers.text_search);
+		if (req.query.fulltext !== undefined) {
+			params.fulltext = sanitize(req.query.fulltext, sanitizers.text_search);
 		}
 		if (req.query.page !== undefined) {
 			params.page = sanitize(req.query.page);
@@ -290,7 +290,6 @@ module.exports = exports = function(app, db, passport) {
 function doSearch(query_params,req,res,db) {
 	var textstore = new Textstore(db);
 	var tags = null;
-	var title = null;
 	
 	if (query_params.tags !== undefined) {
 		if (query_params.tags.length > 0) {
@@ -301,15 +300,18 @@ function doSearch(query_params,req,res,db) {
 	if (query_params.page === undefined) {
 		query_params.page = 1;
 	}
-	textstore.covertTagsToParams(tags, function(params) {
+	textstore.covertInputToParams(tags, query_params.fulltext, function(params) {
 		if (query_params.story !== undefined) {
 			params["story.name"] = query_params.story;
 			if (query_params.sortby === undefined) {
 				query_params.sortby = "story";
 			}
 		}
-		textstore.buildQueryOptions(query_params.page, query_params.sortby, function(options, skip, limit) {
-			textstore.getSearchResults(params, options, skip, limit, function(err, data, count, taglist) {
+		textstore.buildQueryOptions(query_params.page, query_params.fulltext, 
+				                    query_params.sortby, function(sort_options, return_vals, 
+				                    		                      skip, limit) {
+			textstore.getSearchResults(params, sort_options, return_vals, skip, 
+					                   limit, function(err, data, count, taglist) {
 				if (err) {
 					res.render('searchresults',{'error':err.message 
 									 	,'images':{}
@@ -319,6 +321,7 @@ function doSearch(query_params,req,res,db) {
 					res.render('searchresults',{'searchresults':data
 									 	,'user':req.user
 									 	,'tags':query_params.tags
+									 	,'fulltext':query_params.fulltext
 									 	,'count':count
 									 	,'page':query_params.page
 									 	,'config':config.site

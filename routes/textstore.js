@@ -36,18 +36,26 @@ function Textstore(db) {
 	this.textdata = db.collection("textdata");
 }
 
-Textstore.prototype.covertTagsToParams = function convertParamsToQuery(tags, callback) {
+Textstore.prototype.covertInputToParams = function covertInputToParams(tags, fulltext, callback) {
+	var params = {};
+	// default to excluding all images that have been marked for deletion
+	// this will be overridden if the user has passed 'deleted' as a parameter
+	params["deleted"] = {'$ne':true};
+
+	// if the user passed input in the text search field, then we need to add that parameter
+	if (fulltext!==undefined) {
+		if (fulltext.length > 0) {
+			params["$text"] = {'$search':fulltext};
+		}
+	}
+	
+	// if no tag value was passed, user provided no input, so return only the default parameters
 	if (tags===null) {
-		return callback({});
+		return callback(params);
 	} else {
-		var params = {};
 		var tagarray_positive = [];
 		var tagarray_negative = [];
 		var untag = false;
-		
-		// default to excluding all images that have been marked for deletion
-		// this will be overridden if the user has passed 'deleted' as a parameter
-		params["deleted"] = {'$ne':true};
 		
 		tags.forEach(function(item) {
 			switch(item) {
@@ -85,10 +93,12 @@ Textstore.prototype.covertTagsToParams = function convertParamsToQuery(tags, cal
 	}
 };
 
-Textstore.prototype.buildQueryOptions = function buildQueryOptions(page,orderby,callback) {
-	var options = {};
+Textstore.prototype.buildQueryOptions = function buildQueryOptions(page,textsearch,
+		                                                           orderby,callback) {
+	var sort_options = {};
 	var skip = 0;
 	var limit = config.site.resultsPerPage;
+	var return_vals = {'title':true,'tags':true,'summary':true};
 	
 	if (page !== undefined) {
 		if (!isNaN(page)) {
@@ -98,25 +108,36 @@ Textstore.prototype.buildQueryOptions = function buildQueryOptions(page,orderby,
 		}
 	}
 
+	// if we are performing a text search then we need to add the "score" to the
+	// return results for sorting and display purposes
+	if (textsearch !== undefined) {
+		if (textsearch.length > 0) {
+			return_vals["score"] = {"$meta":"textScore"};
+		}
+	}
+	
 	// order by stuff here
 	if (orderby === undefined) {
-		options["sort"] = [['date','desc']];
+		sort_options["date"] = -1;
 	} else {
 		switch (orderby) {
 			case "last":
-				options["sort"] = [['last_viewed','asc']];
+				sort_options["last_viewed"] = 1;
 				break;
 			case "story":
-				options["sort"] = [['story.chapter','asc']];
+				sort_options["story.chapter"] = 1;
+				break;
+			case "relevance":
+				sort_options["score"] = {'$meta':'textScore'};
 				break;
 			case "recent":
 			default:
-				options["sort"] = [['date','desc']];
+				sort_options["date"] = -1;
 				break;
 		}
 	}
 	
-	callback(options, skip, limit);
+	callback(sort_options, return_vals, skip, limit);
 };
 
 // The skip and limit were moved to cursor operations as opposed to passing them as 
@@ -124,10 +145,11 @@ Textstore.prototype.buildQueryOptions = function buildQueryOptions(page,orderby,
 // that was not ignoring the skip() and limit() functions when doing a count() on the find
 // results.
 
-Textstore.prototype.getSearchResults = function getSearchResults(params, options, skip, 
+Textstore.prototype.getSearchResults = function getSearchResults(params, sort_options, 
+																 return_vals, skip, 
 																 limit, callback) {
 	var textdata = this.textdata;
-	var searchresults = textdata.find(params,{'title':true,'tags':true,'summary':true},options);
+	var searchresults = textdata.find(params,return_vals).sort(sort_options);
 	searchresults.count(function(err,count) {
 		if (err) {
 			return callback(err);

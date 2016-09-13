@@ -38,6 +38,9 @@ $( document ).ready(function() {
 				<a href="/document?id={{textdata._id.toString()}}">
 				{{textdata.title}}
 				</a>
+				{% if textdata.score > 0 %}
+					<span class="summaryitemscore">Relevance: {{textdata.score.toFixed(2)}}</span>
+				{% endif %}
 			</div>
 			<div class="summaryitemsummary">
 				{{textdata.summary}}

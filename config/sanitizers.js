@@ -6,5 +6,8 @@ sanitizers.standard = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ12345
 sanitizers.allow_spaces = ' ' + sanitizers.standard;
 //be a bit more generous in comment fields
 sanitizers.comments = ', ;&' + sanitizers.standard;
+//text search fields need some additional characters
+sanitizers.text_search = ' +\\"' + sanitizers.standard;
+
 
 module.exports = sanitizers;

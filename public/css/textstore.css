@@ -95,6 +95,10 @@ div.summaryitemtags {
 	margin-left: 25px;
 }
 
+span.summaryitemscore {
+	float: right;
+}
+
 div.seriesimg {
     margin: 5px;
     padding: 5px;
