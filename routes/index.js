@@ -1,4 +1,5 @@
 var Textstore = require('./textstore').Textstore
+   ,Tags = require('./tags').Tags
    ,striptags = require('striptags')
    ,config = require('../config/config')
    ,validator = require('validator')
@@ -340,6 +341,23 @@ module.exports = exports = function(app, db, passport) {
 			});
 		}
 	});
+	
+	app.get('/taglist', function(req,res) {
+		var tags = new Tags(db);
+		tags.getTagList(function (err, result) {
+			if (err) {
+				res.render('tags',{'error':err.message
+								  ,'user':req.user
+								  ,'config':config.site});
+				return;
+			} else {
+				res.render('tags',{'taglist':result
+								  ,'user':req.user
+								  ,'config':config.site});
+			}
+		});
+	});
+
 };
 
 
