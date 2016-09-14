@@ -284,6 +284,41 @@ module.exports = exports = function(app, db, passport) {
 		}
 	});
 
+	app.get('/markdeleted-api', function(req,res) {
+		if (req.query.id === undefined) {
+			res.jsonp({'status':'error','error':'Invalid parameter error.'});
+			return;
+		} else {
+			var textstore = new Textstore(db);
+			textstore.markDeleted(sanitize(req.query.id).toLowerCase(), function(err) {
+				if (err) {
+					res.jsonp({'status':'error','error':err.message});
+					return;
+				} else {
+					res.jsonp({'status':'success'});
+					return;
+				} 
+			});
+		}
+	});
+	
+	app.get('/markundeleted-api', function(req,res) {
+		if (req.query.id === undefined) {
+			res.jsonp({'status':'error','error':'Invalid parameter error.'});
+			return;
+		} else {
+			var textstore = new Textstore(db);
+			textstore.markUnDeleted(sanitize(req.query.id).toLowerCase(), function(err) {
+				if (err) {
+					res.jsonp({'status':'error','error':err.message});
+					return;
+				} else {
+					res.jsonp({'status':'success'});
+					return;
+				} 
+			});
+		}
+	});
 };
 
 

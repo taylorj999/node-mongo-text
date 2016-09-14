@@ -47,7 +47,7 @@ function deleteTag(id, tag) {
 	return false;
 }
 
-function deleteImage(id, tag) {
+function deleteDocument(id, tag) {
 	$.ajax({
 		url: "/markdeleted-api",
 		data: {
@@ -57,7 +57,7 @@ function deleteImage(id, tag) {
 		dataType: "jsonp",
 		success: function(data) {
 			if (data.status === "success") {
-				$("#alert").append("This image has been marked for deletion.");
+				$("#alert").append("This document has been marked for deletion.");
 			} else {
 				$("#alert").append("Error from API: " + data.error);
 			}
@@ -69,7 +69,7 @@ function deleteImage(id, tag) {
 	return false;
 }
 
-function unDeleteImage(id, tag) {
+function unDeleteDocument(id, tag) {
 	$.ajax({
 		url: "/markundeleted-api",
 		data: {
@@ -79,7 +79,7 @@ function unDeleteImage(id, tag) {
 		dataType: "jsonp",
 		success: function(data) {
 			if (data.status === "success") {
-				$("#alert").append("This image is no longer marked for deletion.");
+				$("#alert").append("This document is no longer marked for deletion.");
 			} else {
 				$("#alert").append("Error from API: " + data.error);
 			}

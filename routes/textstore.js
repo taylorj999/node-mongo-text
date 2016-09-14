@@ -229,4 +229,18 @@ Textstore.prototype.removeTag = function removeTag(text_id, tag, callback) {
     				   ,callback);
 };
 
+Textstore.prototype.markDeleted = function markDeleted(image_id, callback) {
+	this.textdata.update({'_id':new ObjectId(image_id)}
+    				  ,{'$set':{'deleted':true}}
+    				  ,{}
+    				  ,callback);
+};
+
+Textstore.prototype.markUnDeleted = function markUnDeleted(image_id, callback) {
+	this.textdata.update({'_id':new ObjectId(image_id)}
+					  ,{'$set':{'deleted':false}}
+    				  ,{}
+    				  ,callback);
+};
+
 module.exports.Textstore = Textstore;
