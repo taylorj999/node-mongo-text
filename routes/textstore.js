@@ -243,4 +243,62 @@ Textstore.prototype.markUnDeleted = function markUnDeleted(image_id, callback) {
     				  ,callback);
 };
 
+Textstore.prototype.updateSeriesCount = function updateSeriesCount(series_name, callback) {
+	var self=this;
+	if (series_name===undefined || series_name===null) {
+		return callback(null);
+	} else {
+	  self.textdata.aggregate([{'$match':{'story.storyname':series_name,'deleted':{'$ne':true}}},
+	                         {'$group':{'_id':'story.storyname','count':{'$sum':1}}}]
+	                       ,function(err,result) {
+	        	   if (err) {
+	        		   return callback(err);
+	        	   } else if (result[0].count===0) {
+	        		   return callback(null);
+	        	   } else {
+	        		   self.textdata.update({'story.storyname':series_name}
+	        			   				 ,{'$set':{'story.count':result[0].count}}
+	        			   				 ,{'multi':true}
+	        		   					 ,callback);
+	        	   }
+	           });
+	}
+};
+
+Textstore.prototype.setSequence = function setSequence(image_id, sequence, series_name, callback) {
+	sequence = sequence*1; // explicitly type to integer
+	var self=this;
+	this.textdata.findOneAndUpdate({'_id':new ObjectId(image_id)}
+	                         ,{'$set':{'story.chapter':sequence,
+	                	               'story.storyname':series_name}}
+	                         ,{'returnOriginal':true}
+	                         ,function(err,object) {
+	                        	 if (err) {
+	                        		 return callback(err);
+	                        	 } else {
+	                        		 // update the count for the series to maintain denormalization
+	                        		 // with better data integrity this could be updated
+	                        		 // to check only when the series name is changed
+	                        		 // but this way it will 'clean up' any entries without counts
+	                        		 var old_name;
+	                        		 if (object.story === undefined) {
+	                        			 old_name = null;
+	                        		 } else {
+	                        			 old_name = object.story.storyname;
+	                        		 }
+	                        		 self.updateSeriesCount(old_name
+	                        				               ,function (err) {
+		                        			 				 if (err) {
+			                        			 				return callback(err);
+			                        			 			 } else if (series_name != old_name){
+			                        			 				self.updateSeriesCount(series_name
+			                        			 			  			              ,callback);
+			                        			 			 } else {
+			                        			 				return callback(null);
+			                        			 			 }
+			                        		 			   });
+	                        	 }
+	                         });
+};
+
 module.exports.Textstore = Textstore;

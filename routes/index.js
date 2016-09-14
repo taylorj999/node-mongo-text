@@ -319,6 +319,27 @@ module.exports = exports = function(app, db, passport) {
 			});
 		}
 	});
+	
+	app.get('/setsequence-api', function(req,res) {
+		if ((req.query.id === undefined)||(req.query.sequence === undefined)||isNaN(req.query.sequence)) {
+			res.jsonp({'status':'error','error':'Invalid parameter error.'});
+			return;
+		} else {
+			var textstore = new Textstore(db);
+			textstore.setSequence(sanitize(req.query.id).toLowerCase()
+					           ,sanitize(req.query.sequence)
+					           ,sanitize(req.query.series_name)
+					           ,function(err) {
+				if (err) {
+					res.jsonp({'status':'error','error':err.message});
+					return;
+				} else {
+					res.jsonp({'status':'success'});
+					return;
+				} 
+			});
+		}
+	});
 };
 
 

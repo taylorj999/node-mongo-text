@@ -23,7 +23,7 @@
 			</form>
 		</div>
 	{% endif %}
-	{% if textdata.tags.indexOf('series') >=0 %}
+	{% if textdata.story.storyname %}
 		<span style="font-size: 12px">Series Info</span>
 		<div class="series">
 		{% if user %}
@@ -33,10 +33,10 @@
 				<input type="button" name="set" value="set" class="set-button" onClick="javascript:setSequence('{{textdata._id.toString()}}');"/>
 			</form>
 	 	{% else %}
-	 		<span style="font-size: 12px">Series: {{textdata.story.storyname}}</span>
-	 	 	<span style="font-size: 12px">Sequence: {{textdata.story.chapter}}</span>
+	 		<span style="font-size: 12px">Story: {{textdata.story.storyname}}</span>
+	 	 	<span style="font-size: 12px">Chapter: {{textdata.story.chapter}}</span>
 	 	{% endif %}
-			<span style="font-size: 12px">Images in series: {{textdata.story.count}}</span>
+			<span style="font-size: 12px">Chapter count: {{textdata.story.count}}</span>
 		</div>
 	{% endif %}
 	{% if user %}
