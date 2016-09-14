@@ -88,8 +88,8 @@ module.exports = exports = function(app, db, passport) {
 					              ,sanitize(req.query.chapter)
 					              ,function(err,result) {
 									if (result) {
-										if (result.current !== undefined) {
-											result.current = striptags(result.current);
+										if (result.value.current !== undefined) {
+											result.value.current = striptags(result.value.current);
 										}
 									}
 									if (err) {
@@ -108,8 +108,8 @@ module.exports = exports = function(app, db, passport) {
 		} else {
 			textstore.getDocument(sanitize(req.query.id).toLowerCase(), function(err,result) {
 				if (result) {
-					if (result.current !== undefined) {
-						result.current = striptags(result.current);
+					if (result.value.current !== undefined) {
+						result.value.current = striptags(result.value.current);
 					}
 				}
 				if (err) {
@@ -135,8 +135,8 @@ module.exports = exports = function(app, db, passport) {
 		}  else {
 			textstore.getDocument(sanitize(req.body.id).toLowerCase(), function(err,result) {
 				if (result) {
-					if (result.current !== undefined) {
-						result.current = striptags(result.current);
+					if (result.value.current !== undefined) {
+						result.value.current = striptags(result.value.current);
 					}
 				}
 				if (err) {
@@ -161,8 +161,8 @@ module.exports = exports = function(app, db, passport) {
 		}  else {
 			textstore.getDocument(sanitize(req.query.id).toLowerCase(), function(err,result) {
 				if (result) {
-					if (result.current !== undefined) {
-						result.current = striptags(result.current);
+					if (result.value.current !== undefined) {
+						result.value.current = striptags(result.value.current);
 					}
 				}
 				if (err) {
