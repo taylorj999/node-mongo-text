@@ -24,7 +24,6 @@ MongoClient.connect(config.system.mongoConnectString, function(err, db) {
     require('./config/passport')(passport,db);
 
     app.use(express.static(path.join(__dirname, "public")));
-    app.use(express.static(path.join(__dirname, "images")));
     
     // Register our templating engine
     app.engine('html', consolidate.swig);

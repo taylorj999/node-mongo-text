@@ -11,7 +11,7 @@
     <div class="taglist">
     	<span style="font-size: 12px">Doc Tags</span>
 		{% for tag in textdata.tags.sort() %}
-		<div class="tag" id="{{tag}}"><a href="/search?tags={{tag}}&page=1">{{tag}}</a> {% if user %}<img src="/images/delete-sm.png" class="delete-button" onClick="javascript:deleteTag('{{image._id.toString()}}','{{tag}}');"/>{% endif %}</div>
+		<div class="tag" id="{{tag}}"><a href="/search?tags={{tag}}&page=1">{{tag}}</a> {% if user %}<img class="delete-button" onClick="javascript:deleteTag('{{image._id.toString()}}','{{tag}}');"/>{% endif %}</div>
 		{% endfor %}
 	</div>
 	{% if user %}

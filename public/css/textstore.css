@@ -136,6 +136,9 @@ div.imagedetail {
 }
 
 .delete-button {
+    background-image: url(/images/delete-sm.png);
+    background-size: 100%;
+    background-repeat:no-repeat;
     float: right;
     width: 15px;
     height: 15px;
