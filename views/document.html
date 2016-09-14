@@ -63,11 +63,11 @@
 		{% if textdata.story.count >= 1 %}
 		<div id="seriesnav">
 			{% if textdata.story.chapter > 1 %}
-				<a href="image?series={{textdata.series.name}}&sequence={{textdata.story.chapter - 1}}">&lt;&lt;&lt; Prev</a> 
+				<a href="document?story={{textdata.story.storyname}}&chapter={{textdata.story.chapter - 1}}">&lt;&lt;&lt; Prev</a> 
 			{% endif %}
 			{{textdata.story.chapter}} of {{textdata.story.count}}
 			{% if textdata.story.chapter < textdata.story.count %}
-				<a href="image?series={{textdata.series.name}}&sequence={{textdata.story.chapter + 1}}">Next &gt;&gt;&gt;</a>
+				<a href="document?story={{textdata.story.storyname}}&chapter={{textdata.story.chapter + 1}}">Next &gt;&gt;&gt;</a>
 			{% endif %}
 		</div>
 		{% endif %}
@@ -82,11 +82,11 @@
 		{% if textdata.story.count >= 1 %}
 		<div id="seriesnav">
 			{% if textdata.story.chapter > 1 %}
-				<a href="image?series={{image.series.name}}&sequence={{textdata.story.chapter - 1}}">&lt;&lt;&lt; Prev</a> 
+				<a href="document?story={{textdata.story.storyname}}&chapter={{textdata.story.chapter - 1}}">&lt;&lt;&lt; Prev</a> 
 			{% endif %}
 			{{textdata.story.chapter}} of {{textdata.story.count}}
 			{% if textdata.story.chapter < textdata.story.count %}
-				<a href="image?series={{textdata.story.storyname}}&sequence={{textdata.story.chapter + 1}}">Next &gt;&gt;&gt;</a>
+				<a href="document?story={{textdata.story.storyname}}&chapter={{textdata.story.chapter + 1}}">Next &gt;&gt;&gt;</a>
 			{% endif %}
 		</div>
 		{% endif %}

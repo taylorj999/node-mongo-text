@@ -85,10 +85,10 @@ module.exports = exports = function(app, db, passport) {
 		if ((req.query.id === undefined)&&(req.query.story === undefined)) {
 			res.render('document',{'error':'Invalid parameter error'});
 		} else if (req.query.id === undefined) {
-			gallery.getStoryChapter(sanitize(req.query.story).toLowerCase()
-					              ,sanitize(req.query.chapter)
-					              ,function(err,result) {
-									if (result) {
+			textstore.getStoryChapter(sanitize(req.query.story)
+					                 ,sanitize(req.query.chapter)
+					                 ,function(err,result) {
+									if (result.value) {
 										if (result.value.current !== undefined) {
 											result.value.current = striptags(result.value.current);
 										}
@@ -108,7 +108,7 @@ module.exports = exports = function(app, db, passport) {
 			});
 		} else {
 			textstore.getDocument(sanitize(req.query.id).toLowerCase(), function(err,result) {
-				if (result) {
+				if (result.value) {
 					if (result.value.current !== undefined) {
 						result.value.current = striptags(result.value.current);
 					}
@@ -135,7 +135,7 @@ module.exports = exports = function(app, db, passport) {
 			res.render('editdoc',{'error':'Invalid parameter error'});
 		}  else {
 			textstore.getDocument(sanitize(req.body.id).toLowerCase(), function(err,result) {
-				if (result) {
+				if (result.value) {
 					if (result.value.current !== undefined) {
 						result.value.current = striptags(result.value.current);
 					}
@@ -161,7 +161,7 @@ module.exports = exports = function(app, db, passport) {
 			res.render('editdoc',{'error':'Invalid parameter error'});
 		}  else {
 			textstore.getDocument(sanitize(req.query.id).toLowerCase(), function(err,result) {
-				if (result) {
+				if (result.value) {
 					if (result.value.current !== undefined) {
 						result.value.current = striptags(result.value.current);
 					}
@@ -191,9 +191,9 @@ module.exports = exports = function(app, db, passport) {
 									 req.body.textdata,
 									 req.body.textsummary,
 									 function(err, result) {
-				if (result) {
-					if (result.current !== undefined) {
-						result.current = striptags(result.current);
+				if (result.value) {
+					if (result.value.current !== undefined) {
+						result.value.current = striptags(result.value.current);
 					}
 				}
 				if (err) {
@@ -220,9 +220,9 @@ module.exports = exports = function(app, db, passport) {
 		}  else {
 			textstore.revertDocument(sanitize(req.query.id).toLowerCase(),
 									 function(err, result) {
-				if (result) {
-					if (result.current !== undefined) {
-						result.current = striptags(result.current);
+				if (result.value) {
+					if (result.value.current !== undefined) {
+						result.value.current = striptags(result.value.current);
 					}
 				}
 				if (err) {
@@ -358,6 +358,53 @@ module.exports = exports = function(app, db, passport) {
 		});
 	});
 
+	app.post('/serieslist', function(req,res) {
+		var textstore = new Textstore(db);
+		var page = 1;
+		if (req.body.seriespage !== undefined) {
+			page = sanitize(req.body.seriespage);
+		}
+		textstore.getSeriesList(page,
+							  config.site.resultsPerPage,
+				              function (err, result, count) {
+			if (err) {
+				res.render('serieslist',{'error':err.message
+								  ,'user':req.user
+								  ,'config':config.site});
+				return;
+			} else {
+				res.render('serieslist',{'serieslist':result
+								  ,'user':req.user
+								  ,'config':config.site
+								  ,'count':count
+								  ,'page':page});
+			}
+		});
+	});
+	app.get('/serieslist', function(req,res) {
+		var textstore = new Textstore(db);
+		var page = 1;
+		if (req.query.seriespage !== undefined) {
+			page = sanitize(req.query.seriespage);
+		}
+		textstore.getSeriesList(page,
+							  config.site.resultsPerPage,
+	              			  function (err, result, count) {
+			if (err) {
+				res.render('serieslist',{'error':err.message
+								  ,'user':req.user
+								  ,'config':config.site});
+				return;
+			} else {
+				res.render('serieslist',{'serieslist':result
+								  ,'user':req.user
+								  ,'config':config.site
+								  ,'count':count
+								  ,'page':page});
+			}
+		});
+	});
+
 };
 
 
@@ -376,7 +423,7 @@ function doSearch(query_params,req,res,db) {
 	}
 	textstore.covertInputToParams(tags, query_params.fulltext, function(params) {
 		if (query_params.story !== undefined) {
-			params["story.name"] = query_params.story;
+			params["story.storyname"] = query_params.story;
 			if (query_params.sortby === undefined) {
 				query_params.sortby = "story";
 			}

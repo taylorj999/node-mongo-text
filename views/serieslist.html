@@ -1,0 +1,48 @@
+{% extends 'frametemplate.html' %}
+
+{% block title %}Series List{% endblock %}
+
+{% block header %}
+<script type="text/javascript" src="/js/jquery.simplePagination.js"></script>
+<link rel="stylesheet" href="/css/simplePagination.css"/>
+<script language="JavaScript">
+$( document ).ready(function() {
+    $("#pagination").pagination({
+        items: {{count}},
+        itemsOnPage: {{config.imagesPerPage}},
+        cssStyle: 'light-theme',
+        currentPage: {{page}},
+        onPageClick: function (pageNum) {
+        	$('input[name="seriespage"]').val(pageNum);
+        	document.forms.serieslist.submit();
+        }
+    });
+});
+</script>
+{% endblock %}
+
+{% block leftcolumn %}
+	<div class="taglist">
+	{% for tag in taglist.sort() %}
+		<div class="tag" id="{{tag}}"><a href="/search?tags={{tag}}&page=1">{{tag}}</a></div>
+	{% endfor %}
+	</div>
+{% endblock %}
+
+{% block main %}
+	<form name="serieslist" action="/serieslist" method="POST">
+		<input type="hidden" name="seriespage" value="{{page}}"/>
+	</form>
+	<div id="alert">{{error}}</div>
+	<div class="summarylist">
+	{% for series in serieslist %}
+		<div class="summaryitem">
+			<div class="summaryitemtitle">
+				<a href="/search?story={{series._id}}">{{series._id}}</a>
+				<span class="summaryitemscore">Chapters: {{series.count}}<span>
+			</div>
+		</div>
+	{% endfor %}
+		<div class="pagination" id="pagination"/>
+	</div>
+{% endblock %}

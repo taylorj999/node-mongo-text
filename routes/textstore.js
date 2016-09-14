@@ -301,4 +301,35 @@ Textstore.prototype.setSequence = function setSequence(image_id, sequence, serie
 	                         });
 };
 
+Textstore.prototype.getSeriesList = function getSeriesList(page, limit, callback) {
+	this.textdata.aggregate([{'$match':{'deleted':{'$ne':true},'story.storyname':{'$exists':true}}},
+	                       {'$sort':{'story.chapter':1}},
+	                       {'$group':{'_id':'$story.storyname'
+	                                 ,'count':{'$sum':1}
+	                                 ,'summary':{'$first':'$summary'}
+	                                 ,'textid':{'$first':'$_id'}}},
+	                       {'$sort':{'_id':1}}],function(err,result) {
+							if (err) {
+								return callback(err);
+							} else {
+								var sLength = result.length;
+								if (sLength > (page * limit)) {
+									result.length = page * limit;
+								}
+								if (page > 1) {
+									result = result.splice((page-1)*limit,(page*limit)-1);
+								}
+								return callback(null,result,sLength);
+							}
+						 });
+};
+
+Textstore.prototype.getStoryChapter = function getSeriesImage(series, sequence, callback) {
+	sequence = sequence * 1;
+	this.textdata.findOneAndUpdate({'story.storyname':series,'story.chapter':sequence}
+							  ,{'$set':{'last_viewed':new Date()}}
+							  ,{'returnOriginal':false}
+							  ,callback);
+};
+
 module.exports.Textstore = Textstore;
