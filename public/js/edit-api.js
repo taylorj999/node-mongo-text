@@ -134,7 +134,7 @@ function saveDocument(id, textbody, textsummary) {
 			 'textdata': textbody,
 			 'textsummary': textsummary
 		},
-		async: false,
+		type: "post",
 		dataType: "jsonp",
 		success: function(data) {
 			if (data.status === "success") {
@@ -145,7 +145,7 @@ function saveDocument(id, textbody, textsummary) {
 			}
 		},
 		error: function(xhr,textStatus,errorThrown) {
-			$("#alert").append("Error on Ajax call:" + textStatus);
+			$("#alert").append("Error on Ajax call:" + xhr.responseText);
 			return null;
 		}
 	});

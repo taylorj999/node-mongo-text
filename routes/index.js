@@ -292,15 +292,15 @@ module.exports = exports = function(app, db, passport) {
 		});
 	});
 
-	app.get('/savedocument-api', function(req,res) {
-		if (req.query.id === undefined || req.query.textdata === undefined || req.query.textsummary === undefined) {
+	app.post('/savedocument-api', function(req,res) {
+		if (req.body.id === undefined || req.body.textdata === undefined || req.body.textsummary === undefined) {
 			res.jsonp({'status':'error','error':'Invalid parameter error: empty values.'});
 			return;
 		} else {
 			var textstore = new Textstore(db);
-			textstore.updateDocument(sanitize(req.query.id).toLowerCase(),
-					 req.query.textdata,
-					 req.query.textsummary,
+			textstore.updateDocument(sanitize(req.body.id).toLowerCase(),
+					 req.body.textdata,
+					 req.body.textsummary,
 					 function(err, result) {
 				if (result.value) {
 					if (result.value.current !== undefined) {
