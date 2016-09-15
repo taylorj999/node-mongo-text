@@ -3,7 +3,44 @@
 {% block title %}Document{% endblock %}
 
 {% block header %}
+<script type="text/javascript" src="/js/rtf-converters.js"></script>
 <script type="text/javascript" src="/js/edit-api.js"></script>
+<script type="text/javascript">
+function switchToEditMode() {
+	$("#displaymain").hide();
+	$("#editmain").show();
+}
+
+function switchToDisplayMode() {
+	$("#editmain").hide();
+	$("#displaymain").show();
+}
+
+function removeRTF() {
+	var textConverter = new TextConverter();
+	$("textarea[name=textdata]").val(textConverter.convert($("textarea[name=textdata]").val()));
+}
+
+function doSaveChanges() {
+	var result = saveDocument('{{textdata._id.toString()}}',
+	                          $("textarea[name=textdata]").val(),
+	             			  $("textarea[name=textsummary]").val());
+	if (result && result.status === "success") {
+		$("textarea[name=textdata]").val(result.body);
+		$("textarea[name=textsummary]").val(result.summary);
+		$("#textdata").html(result.body);
+	}
+}
+
+function doRevertChanges() {
+	var result = revertDocument('{{textdata._id.toString()}}');
+	if (result && result.status === "success") {
+		$("textarea[name=textdata]").val(result.body);
+		$("textarea[name=textsummary]").val(result.summary);
+		$("#textdata").html(result.body);
+	}
+}
+</script>
 {% endblock %}
 
 {% block leftcolumn %}
@@ -59,6 +96,7 @@
 
 {% block main %}
 	<div id="alert">{{error}}</div>
+	<div id="displaymain">
 	{% if textdata %}
 		{% if textdata.story.count >= 1 %}
 		<div id="seriesnav">
@@ -73,10 +111,10 @@
 		{% endif %}
 		<!// add if user/>
 		<div id="editbutton">
-		<a href="edit?id={{textdata._id.toString()}}">EDIT</a>
+			<a href="javascript:switchToEditMode();">EDIT</a>
 		</div>
 		<!// add endif/>
-	<div id="textdata">{{textdata.current}}</div>
+		<div id="textdata">{{textdata.current}}</div>
 		{% if textdata.story.count >= 1 %}
 		<div id="seriesnav">
 			{% if textdata.story.chapter > 1 %}
@@ -109,5 +147,29 @@
 				{% endif %}
 			</div>
 		{% endif %}
+	</div>
+	<div id="editmain">
+		<div class="removertfbutton">
+			<a href="javascript:removeRTF();">Remove RTF Encoding</a>
+		</div>
+		<div class="savebutton">
+			<a href="javascript:doSaveChanges();">Save changes</a>
+		</div>
+		<div class="revertbutton">
+			<a href="javascript:doRevertChanges();">Revert to previous version</a>
+		</div>
+		<div class="donewitheditsbutton">
+			<a href="javascript:switchToDisplayMode();">Done editing</a>
+		</div>
+		<form name="editdoc" method="post" action="/save">
+			<input type="hidden" name="id" value="{{textdata._id.toString()}}"/>
+		<div id="edittextsummary">
+			<textarea name="textsummary" rows="5" cols="80">{{textdata.summary}}</textarea>
+		</div>
+		<div id="edittextdata">
+			<textarea name="textdata" rows="20" cols="80">{{textdata.current}}</textarea>
+		</div>
+		</form>	
+	</div>
 	{% endif %}
 {% endblock %}

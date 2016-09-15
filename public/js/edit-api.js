@@ -34,7 +34,7 @@ function deleteTag(id, tag) {
 		dataType: "jsonp",
 		success: function(data) {
 			if (data.status === "success") {
-				tagdiv = "#"+data.tag;
+				var tagdiv = "#"+data.tag;
 				$(tagdiv).remove();
 			} else {
 				$("#alert").append("Error from API: " + data.error);
@@ -123,4 +123,56 @@ function setSequence(id) {
 		}
 	});
 	return false;
+}
+
+function saveDocument(id, textbody, textsummary) {
+	var jsondata = null;
+	$.ajax({
+		url: "/savedocument-api",
+		data: {
+			 'id': id,
+			 'textdata': textbody,
+			 'textsummary': textsummary
+		},
+		async: false,
+		dataType: "jsonp",
+		success: function(data) {
+			if (data.status === "success") {
+				jsondata = data;
+			} else {
+				$("#alert").append("Error from API: " + data.error);
+				return null;
+			}
+		},
+		error: function(xhr,textStatus,errorThrown) {
+			$("#alert").append("Error on Ajax call:" + textStatus);
+			return null;
+		}
+	});
+	return jsondata;
+}
+
+function revertDocument(id) {
+	var jsondata = null;
+	$.ajax({
+		url: "/revertdocument-api",
+		data: {
+			 'id': id
+		},
+		async: false,
+		dataType: "jsonp",
+		success: function(data) {
+			if (data.status === "success") {
+				jsondata =  data;
+			} else {
+				$("#alert").append("Error from API: " + data.error);
+				return null;
+			}
+		},
+		error: function(xhr,textStatus,errorThrown) {
+			$("#alert").append("Error on Ajax call:" + textStatus);
+			return null;
+		}
+	});
+	return jsondata;
 }

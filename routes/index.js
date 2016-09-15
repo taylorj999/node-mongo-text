@@ -405,6 +405,69 @@ module.exports = exports = function(app, db, passport) {
 		});
 	});
 
+	app.get('/savedocument-api', function(req,res) {
+		if (req.query.id === undefined || req.query.textdata === undefined || req.query.textsummary === undefined) {
+			res.jsonp({'status':'error','error':'Invalid parameter error: empty values.'});
+			return;
+		} else {
+			var textstore = new Textstore(db);
+			textstore.updateDocument(sanitize(req.query.id).toLowerCase(),
+					 req.query.textdata,
+					 req.query.textsummary,
+					 function(err, result) {
+				if (result.value) {
+					if (result.value.current !== undefined) {
+						result.value.current = striptags(result.value.current);
+					}
+				}
+				if (err) {
+					res.jsonp({'status':'error','error':err.message});
+				    return;
+			    } else {
+			    	if (!result.value) {
+			    		res.jsonp({'status':'error','error':'Error getting document from database: no document found'});
+			    		return;
+			    	}
+			    	res.jsonp({'status':'success',
+			    			   'title':result.value.title,
+			    			   'summary':result.value.summary,
+			    			   'body':result.value.current});
+				    return;
+			    }
+			});
+		}
+	});
+	
+	app.get('/revertdocument-api', function(req,res) {
+		if (req.query.id === undefined) {
+			res.jsonp({'status':'error','error':'Invalid parameter error: empty id value.'});
+			return;
+		} else {
+			var textstore = new Textstore(db);
+			textstore.revertDocument(sanitize(req.query.id).toLowerCase(),
+					 function(err, result) {
+				if (result.value) {
+					if (result.value.current !== undefined) {
+						result.value.current = striptags(result.value.current);
+					}
+				}
+				if (err) {
+					res.jsonp({'status':'error','error':err.message});
+				    return;
+			    } else {
+			    	if (!result.value) {
+			    		res.jsonp({'status':'error','error':'Error getting document from database: no document found'});
+			    		return;
+			    	}
+			    	res.jsonp({'status':'success',
+			    			   'title':result.value.title,
+			    			   'summary':result.value.summary,
+			    			   'body':result.value.current});
+				    return;
+			    }
+			});
+		}
+	});
 };
 
 

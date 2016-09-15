@@ -149,3 +149,7 @@ div.imagedetail {
 div.delete {
 	margin-top: 100px;
 }
+
+div#editmain {
+	display: none;
+}
