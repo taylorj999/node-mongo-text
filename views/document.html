@@ -28,6 +28,7 @@ function doSaveChanges() {
 	if (result && result.status === "success") {
 		$("textarea[name=textdata]").val(result.body);
 		$("textarea[name=textsummary]").val(result.summary);
+		$("#textdata").html();
 		$("#textdata").html(result.body);
 	}
 }
@@ -37,6 +38,7 @@ function doRevertChanges() {
 	if (result && result.status === "success") {
 		$("textarea[name=textdata]").val(result.body);
 		$("textarea[name=textsummary]").val(result.summary);
+		$("#textdata").html();
 		$("#textdata").html(result.body);
 	}
 }
