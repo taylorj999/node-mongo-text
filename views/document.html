@@ -22,25 +22,25 @@ function removeRTF() {
 }
 
 function doSaveChanges() {
-	var result = saveDocument('{{textdata._id.toString()}}',
-	                          $("textarea[name=textdata]").val(),
-	             			  $("textarea[name=textsummary]").val());
-	if (result && result.status === "success") {
-		$("textarea[name=textdata]").val(result.body);
-		$("textarea[name=textsummary]").val(result.summary);
-		$("#textdata").html();
-		$("#textdata").html(result.body);
-	}
+	saveDocument('{{textdata._id.toString()}}',
+	             $("textarea[name=textdata]").val(),
+	             $("textarea[name=textsummary]").val()).done(function(data) {
+		if (data && (data.status === "success")) {
+			$("textarea[name=textdata]").val(data.body);
+			$("textarea[name=textsummary]").val(data.summary);
+			$("#textdata").html(data.body);
+		}
+	});
 }
 
 function doRevertChanges() {
-	var result = revertDocument('{{textdata._id.toString()}}');
-	if (result && result.status === "success") {
-		$("textarea[name=textdata]").val(result.body);
-		$("textarea[name=textsummary]").val(result.summary);
-		$("#textdata").html();
-		$("#textdata").html(result.body);
-	}
+	revertDocument('{{textdata._id.toString()}}').done(function(data) {
+		if (data && (data.status === "success")) {
+			$("textarea[name=textdata]").val(data.body);
+			$("textarea[name=textsummary]").val(data.summary);
+			$("#textdata").html(data.body);
+		}
+	});
 }
 </script>
 {% endblock %}

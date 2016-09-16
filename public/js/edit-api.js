@@ -6,7 +6,6 @@ function addTag(id) {
 			 'id': id
 		    ,'newtag': newtag
 		},
-		async: false,
 		dataType: "jsonp",
 		success: function(data) {
 			if (data.status === "success") {
@@ -30,7 +29,6 @@ function deleteTag(id, tag) {
 			 'id': id
 		    ,'tag': tag
 		},
-		async: false,
 		dataType: "jsonp",
 		success: function(data) {
 			if (data.status === "success") {
@@ -53,7 +51,6 @@ function deleteDocument(id, tag) {
 		data: {
 			 'id': id
 		},
-		async: false,
 		dataType: "jsonp",
 		success: function(data) {
 			if (data.status === "success") {
@@ -75,7 +72,6 @@ function unDeleteDocument(id, tag) {
 		data: {
 			 'id': id
 		},
-		async: false,
 		dataType: "jsonp",
 		success: function(data) {
 			if (data.status === "success") {
@@ -109,7 +105,6 @@ function setSequence(id) {
 			,'sequence':sequence
 			,'series_name':series_name
 		},
-		async: false,
 		dataType: "jsonp",
 		success: function(data) {
 			if (data.status === "success") {
@@ -126,8 +121,7 @@ function setSequence(id) {
 }
 
 function saveDocument(id, textbody, textsummary) {
-	var jsondata = null;
-	$.ajax({
+	return $.ajax({
 		url: "/savedocument-api",
 		data: {
 			 'id': id,
@@ -138,7 +132,7 @@ function saveDocument(id, textbody, textsummary) {
 		dataType: "jsonp",
 		success: function(data) {
 			if (data.status === "success") {
-				jsondata = data;
+				return data;
 			} else {
 				$("#alert").append("Error from API: " + data.error);
 				return null;
@@ -149,21 +143,18 @@ function saveDocument(id, textbody, textsummary) {
 			return null;
 		}
 	});
-	return jsondata;
 }
 
 function revertDocument(id) {
-	var jsondata = null;
-	$.ajax({
+	return $.ajax({
 		url: "/revertdocument-api",
 		data: {
 			 'id': id
 		},
-		async: false,
 		dataType: "jsonp",
 		success: function(data) {
 			if (data.status === "success") {
-				jsondata =  data;
+				return data;
 			} else {
 				$("#alert").append("Error from API: " + data.error);
 				return null;
@@ -174,5 +165,4 @@ function revertDocument(id) {
 			return null;
 		}
 	});
-	return jsondata;
 }
