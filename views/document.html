@@ -68,7 +68,7 @@ function doRevertChanges() {
 		</div>
 	{% endif %}
 	{% if textdata.story.storyname %}
-		<span style="font-size: 12px">Series Info</span>
+		<div style="font-size: 12px">Series Info</div>
 		<div class="series">
 		{% if user %}
 			<form name="setsequence" method="post" action="" onsubmit="setSequence('{{textdata._id.toString()}}');return false;">
@@ -77,10 +77,10 @@ function doRevertChanges() {
 				<input type="button" name="set" value="set" class="set-button" onClick="javascript:setSequence('{{textdata._id.toString()}}');"/>
 			</form>
 	 	{% else %}
-	 		<span style="font-size: 12px">Story: {{textdata.story.storyname}}</span>
-	 	 	<span style="font-size: 12px">Chapter: {{textdata.story.chapter}}</span>
+	 		<div style="font-size: 12px">Story: {{textdata.story.storyname}}</div>
+	 	 	<div style="font-size: 12px">Chapter: {{textdata.story.chapter}}</div>
 	 	{% endif %}
-			<span style="font-size: 12px">Chapter count: {{textdata.story.count}}</span>
+			<div style="font-size: 12px">Chapter count: {{textdata.story.count}}</div>
 		</div>
 	{% endif %}
 	{% if user %}
