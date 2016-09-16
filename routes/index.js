@@ -387,7 +387,7 @@ function doSearch(query_params,req,res,db) {
 					                   limit, function(err, data, count, taglist) {
 				if (err) {
 					res.render('searchresults',{'error':err.message 
-									 	,'images':{}
+									 	,'fulltext':{}
 									 	,'user':req.user});
 					return;
 				} else {

@@ -94,7 +94,7 @@ function doRevertChanges() {
 		</div>
 		{% endif %}
 	{% endif %}
-	<div class="imagedetail">
+	<div class="textdetail">
 		<div id="original">Original: {{textdata.source}}</div>
 		<div id="uploaded">Uploaded on: {{textdata.original_date|date('Y-m-d')}}</div>
 	</div>
@@ -157,17 +157,19 @@ function doRevertChanges() {
 	</div>
 		{% if user %}
 	<div id="editmain">
-		<div class="removertfbutton">
+		<div id="editbuttons">
+		<span class="removertfbutton">
 			<a href="javascript:removeRTF();">Remove RTF Encoding</a>
-		</div>
-		<div class="savebutton">
+		</span>
+		<span class="savebutton">
 			<a href="javascript:doSaveChanges();">Save changes</a>
-		</div>
-		<div class="revertbutton">
+		</span>
+		<span class="revertbutton">
 			<a href="javascript:doRevertChanges();">Revert to previous version</a>
-		</div>
-		<div class="donewitheditsbutton">
+		</span>
+		<span class="donewitheditsbutton">
 			<a href="javascript:switchToDisplayMode();">Done editing</a>
+		</span>
 		</div>
 		<form name="editdoc" method="post" action="/save">
 			<input type="hidden" name="id" value="{{textdata._id.toString()}}"/>
