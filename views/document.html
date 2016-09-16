@@ -3,8 +3,9 @@
 {% block title %}Document{% endblock %}
 
 {% block header %}
-<script type="text/javascript" src="/js/rtf-converters.js"></script>
 <script type="text/javascript" src="/js/edit-api.js"></script>
+	{% if user %}
+<script type="text/javascript" src="/js/rtf-converters.js"></script>
 <script type="text/javascript">
 function switchToEditMode() {
 	$("#displaymain").hide();
@@ -43,6 +44,7 @@ function doRevertChanges() {
 	});
 }
 </script>
+	{% endif %}
 {% endblock %}
 
 {% block leftcolumn %}
@@ -111,11 +113,11 @@ function doRevertChanges() {
 			{% endif %}
 		</div>
 		{% endif %}
-		<!// add if user/>
+		{% if user %}
 		<div id="editbutton">
 			<a href="javascript:switchToEditMode();">EDIT</a>
 		</div>
-		<!// add endif/>
+		{% endif %}
 		<div id="textdata">{{textdata.current}}</div>
 		{% if textdata.story.count >= 1 %}
 		<div id="seriesnav">
@@ -150,6 +152,7 @@ function doRevertChanges() {
 			</div>
 		{% endif %}
 	</div>
+		{% if user %}
 	<div id="editmain">
 		<div class="removertfbutton">
 			<a href="javascript:removeRTF();">Remove RTF Encoding</a>
@@ -173,5 +176,6 @@ function doRevertChanges() {
 		</div>
 		</form>	
 	</div>
+		{% endif %}
 	{% endif %}
 {% endblock %}
