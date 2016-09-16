@@ -25,8 +25,10 @@ function removeRTF() {
 function doSaveChanges() {
 	saveDocument('{{textdata._id.toString()}}',
 	             $("textarea[name=textdata]").val(),
-	             $("textarea[name=textsummary]").val()).done(function(data) {
+	             $("textarea[name=textsummary]").val(),
+	             $("input[name=texttitle]").val()).done(function(data) {
 		if (data && (data.status === "success")) {
+			$("input[name=texttitle]").val(data.title);
 			$("textarea[name=textdata]").val(data.body);
 			$("textarea[name=textsummary]").val(data.summary);
 			$("#textdata").html(data.body);
@@ -37,6 +39,7 @@ function doSaveChanges() {
 function doRevertChanges() {
 	revertDocument('{{textdata._id.toString()}}').done(function(data) {
 		if (data && (data.status === "success")) {
+			$("input[name=texttitle]").val(data.title);
 			$("textarea[name=textdata]").val(data.body);
 			$("textarea[name=textsummary]").val(data.summary);
 			$("#textdata").html(data.body);
@@ -168,10 +171,16 @@ function doRevertChanges() {
 		</div>
 		<form name="editdoc" method="post" action="/save">
 			<input type="hidden" name="id" value="{{textdata._id.toString()}}"/>
+		<div id="edittexttitle">
+			<div class="editfieldheader">Title:</div>
+			<input name="texttitle" length="80" value="{{textdata.title}}"/>
+		</div>
 		<div id="edittextsummary">
+			<div class="editfieldheader">Summary:</div>
 			<textarea name="textsummary" rows="5" cols="80">{{textdata.summary}}</textarea>
 		</div>
 		<div id="edittextdata">
+			<div class="editfieldheader">Body:</div>
 			<textarea name="textdata" rows="20" cols="80">{{textdata.current}}</textarea>
 		</div>
 		</form>	

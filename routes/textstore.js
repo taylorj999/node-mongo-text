@@ -183,7 +183,7 @@ Textstore.prototype.getDocument = function getDocument(text_id, callback) {
 	                    ,callback);
 };
 
-Textstore.prototype.updateDocument = function updateDocument(text_id, new_text, new_summary, callback) {
+Textstore.prototype.updateDocument = function updateDocument(text_id, new_text, new_summary, new_title, callback) {
 	var textdata = this.textdata;
 	textdata.findOne({'_id':new ObjectId(text_id)}, function(err, document) {
 		if (err) {
@@ -192,7 +192,8 @@ Textstore.prototype.updateDocument = function updateDocument(text_id, new_text, 
 			old_text = document.current;
 			textdata.findOneAndUpdate({'_id':new ObjectId(text_id)}
 						             ,{'$set':{'current':new_text,'previous':old_text,
-						        	           'summary':new_summary, 'new':false}}
+						        	           'summary':new_summary, 'title':new_title, 
+						        	           'new':false}}
 								     ,{'returnOriginal':false}
 						             ,callback);
 		}

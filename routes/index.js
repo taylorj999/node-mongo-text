@@ -293,7 +293,8 @@ module.exports = exports = function(app, db, passport) {
 	});
 
 	app.post('/savedocument-api', function(req,res) {
-		if (req.body.id === undefined || req.body.textdata === undefined || req.body.textsummary === undefined) {
+		if (req.body.id === undefined || req.body.textdata === undefined 
+		 || req.body.textsummary === undefined || req.body.texttitle === undefined) {
 			res.jsonp({'status':'error','error':'Invalid parameter error: empty values.'});
 			return;
 		} else {
@@ -301,6 +302,7 @@ module.exports = exports = function(app, db, passport) {
 			textstore.updateDocument(sanitize(req.body.id).toLowerCase(),
 					 req.body.textdata,
 					 req.body.textsummary,
+					 req.body.texttitle,
 					 function(err, result) {
 				if (result.value) {
 					if (result.value.current !== undefined) {

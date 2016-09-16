@@ -120,13 +120,14 @@ function setSequence(id) {
 	return false;
 }
 
-function saveDocument(id, textbody, textsummary) {
+function saveDocument(id, textbody, textsummary, texttitle) {
 	return $.ajax({
 		url: "/savedocument-api",
 		data: {
 			 'id': id,
 			 'textdata': textbody,
-			 'textsummary': textsummary
+			 'textsummary': textsummary,
+			 'texttitle': texttitle
 		},
 		type: "post",
 		dataType: "jsonp",
