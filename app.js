@@ -50,7 +50,7 @@ MongoClient.connect(config.system.mongoConnectString, function(err, db) {
 
 //    app.get('/', routes.index);
     
-    app.set('port', process.env.PORT || config.system.galleryServerPort);
+    app.set('port', process.env.PORT || config.system.serverPort);
     app.listen(app.get('port'), function() {
     	console.log('Express server listening on port ' + app.get('port'));
     });

@@ -38,7 +38,7 @@ function Textstore(db) {
 
 Textstore.prototype.covertInputToParams = function covertInputToParams(tags, fulltext, callback) {
 	var params = {};
-	// default to excluding all images that have been marked for deletion
+	// default to excluding all documents that have been marked for deletion
 	// this will be overridden if the user has passed 'deleted' as a parameter
 	params["deleted"] = {'$ne':true};
 
@@ -77,7 +77,7 @@ Textstore.prototype.covertInputToParams = function covertInputToParams(tags, ful
 					break;
 			}
 		});
-		// build the query for tags; we have to account for searching for untagged images,
+		// build the query for tags; we have to account for searching for untagged documents,
 		// as well as searching by positive, negative or both kinds of matching
 		if (untag) {
 			params["tags"] = {"$size":0};
@@ -183,7 +183,7 @@ Textstore.prototype.getDocument = function getDocument(text_id, callback) {
 	                    ,callback);
 };
 
-Textstore.prototype.updateDocument = function updateDocument(text_id, new_text, new_summary, callback) {
+Textstore.prototype.updateDocument = function updateDocument(text_id, new_text, new_summary, new_title, callback) {
 	var textdata = this.textdata;
 	textdata.findOne({'_id':new ObjectId(text_id)}, function(err, document) {
 		if (err) {
@@ -192,7 +192,8 @@ Textstore.prototype.updateDocument = function updateDocument(text_id, new_text, 
 			old_text = document.current;
 			textdata.findOneAndUpdate({'_id':new ObjectId(text_id)}
 						             ,{'$set':{'current':new_text,'previous':old_text,
-						        	           'summary':new_summary, 'new':false}}
+						        	           'summary':new_summary, 'title':new_title, 
+						        	           'new':false}}
 								     ,{'returnOriginal':false}
 						             ,callback);
 		}
@@ -229,15 +230,15 @@ Textstore.prototype.removeTag = function removeTag(text_id, tag, callback) {
     				   ,callback);
 };
 
-Textstore.prototype.markDeleted = function markDeleted(image_id, callback) {
-	this.textdata.update({'_id':new ObjectId(image_id)}
+Textstore.prototype.markDeleted = function markDeleted(doc_id, callback) {
+	this.textdata.update({'_id':new ObjectId(doc_id)}
     				  ,{'$set':{'deleted':true}}
     				  ,{}
     				  ,callback);
 };
 
-Textstore.prototype.markUnDeleted = function markUnDeleted(image_id, callback) {
-	this.textdata.update({'_id':new ObjectId(image_id)}
+Textstore.prototype.markUnDeleted = function markUnDeleted(doc_id, callback) {
+	this.textdata.update({'_id':new ObjectId(doc_id)}
 					  ,{'$set':{'deleted':false}}
     				  ,{}
     				  ,callback);
@@ -265,10 +266,10 @@ Textstore.prototype.updateSeriesCount = function updateSeriesCount(series_name, 
 	}
 };
 
-Textstore.prototype.setSequence = function setSequence(image_id, sequence, series_name, callback) {
+Textstore.prototype.setSequence = function setSequence(doc_id, sequence, series_name, callback) {
 	sequence = sequence*1; // explicitly type to integer
 	var self=this;
-	this.textdata.findOneAndUpdate({'_id':new ObjectId(image_id)}
+	this.textdata.findOneAndUpdate({'_id':new ObjectId(doc_id)}
 	                         ,{'$set':{'story.chapter':sequence,
 	                	               'story.storyname':series_name}}
 	                         ,{'returnOriginal':true}
@@ -324,7 +325,7 @@ Textstore.prototype.getSeriesList = function getSeriesList(page, limit, callback
 						 });
 };
 
-Textstore.prototype.getStoryChapter = function getSeriesImage(series, sequence, callback) {
+Textstore.prototype.getStoryChapter = function getStoryChapter(series, sequence, callback) {
 	sequence = sequence * 1;
 	this.textdata.findOneAndUpdate({'story.storyname':series,'story.chapter':sequence}
 							  ,{'$set':{'last_viewed':new Date()}}

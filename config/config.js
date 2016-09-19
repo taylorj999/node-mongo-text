@@ -6,7 +6,7 @@ config.system = {};
 
 config.system.mongoConnectString = 'mongodb://localhost:27017/textstore';
 config.system.sessionKey = 'insertyoursecrethere';
-config.system.galleryServerPort = 3001;
+config.system.serverPort = 3001;
 
 // reserved tag keywords, things which are inferred and never assigned directly
 config.system.reservedTags = ['new','deleted','untagged'];

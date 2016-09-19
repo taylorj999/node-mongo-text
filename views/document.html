@@ -4,6 +4,50 @@
 
 {% block header %}
 <script type="text/javascript" src="/js/edit-api.js"></script>
+	{% if user %}
+<script type="text/javascript" src="/js/rtf-converters.js"></script>
+<script type="text/javascript">
+function switchToEditMode() {
+	$("#displaymain").hide();
+	$("#editmain").show();
+}
+
+function switchToDisplayMode() {
+	$("#editmain").hide();
+	$("#displaymain").show();
+}
+
+function removeRTF() {
+	var textConverter = new TextConverter();
+	$("textarea[name=textdata]").val(textConverter.convert($("textarea[name=textdata]").val()));
+}
+
+function doSaveChanges() {
+	saveDocument('{{textdata._id.toString()}}',
+	             $("textarea[name=textdata]").val(),
+	             $("textarea[name=textsummary]").val(),
+	             $("input[name=texttitle]").val()).done(function(data) {
+		if (data && (data.status === "success")) {
+			$("input[name=texttitle]").val(data.title);
+			$("textarea[name=textdata]").val(data.body);
+			$("textarea[name=textsummary]").val(data.summary);
+			$("#textdata").html(data.body);
+		}
+	});
+}
+
+function doRevertChanges() {
+	revertDocument('{{textdata._id.toString()}}').done(function(data) {
+		if (data && (data.status === "success")) {
+			$("input[name=texttitle]").val(data.title);
+			$("textarea[name=textdata]").val(data.body);
+			$("textarea[name=textsummary]").val(data.summary);
+			$("#textdata").html(data.body);
+		}
+	});
+}
+</script>
+	{% endif %}
 {% endblock %}
 
 {% block leftcolumn %}
@@ -24,7 +68,7 @@
 		</div>
 	{% endif %}
 	{% if textdata.story.storyname %}
-		<span style="font-size: 12px">Series Info</span>
+		<div style="font-size: 12px">Series Info</div>
 		<div class="series">
 		{% if user %}
 			<form name="setsequence" method="post" action="" onsubmit="setSequence('{{textdata._id.toString()}}');return false;">
@@ -33,10 +77,10 @@
 				<input type="button" name="set" value="set" class="set-button" onClick="javascript:setSequence('{{textdata._id.toString()}}');"/>
 			</form>
 	 	{% else %}
-	 		<span style="font-size: 12px">Story: {{textdata.story.storyname}}</span>
-	 	 	<span style="font-size: 12px">Chapter: {{textdata.story.chapter}}</span>
+	 		<div style="font-size: 12px">Story: {{textdata.story.storyname}}</div>
+	 	 	<div style="font-size: 12px">Chapter: {{textdata.story.chapter}}</div>
 	 	{% endif %}
-			<span style="font-size: 12px">Chapter count: {{textdata.story.count}}</span>
+			<div style="font-size: 12px">Chapter count: {{textdata.story.count}}</div>
 		</div>
 	{% endif %}
 	{% if user %}
@@ -50,7 +94,7 @@
 		</div>
 		{% endif %}
 	{% endif %}
-	<div class="imagedetail">
+	<div class="textdetail">
 		<div id="original">Original: {{textdata.source}}</div>
 		<div id="uploaded">Uploaded on: {{textdata.original_date|date('Y-m-d')}}</div>
 	</div>
@@ -59,6 +103,7 @@
 
 {% block main %}
 	<div id="alert">{{error}}</div>
+	<div id="displaymain">
 	{% if textdata %}
 		{% if textdata.story.count >= 1 %}
 		<div id="seriesnav">
@@ -71,12 +116,12 @@
 			{% endif %}
 		</div>
 		{% endif %}
-		<!// add if user/>
+		{% if user %}
 		<div id="editbutton">
-		<a href="edit?id={{textdata._id.toString()}}">EDIT</a>
+			<a href="javascript:switchToEditMode();">EDIT</a>
 		</div>
-		<!// add endif/>
-	<div id="textdata">{{textdata.current}}</div>
+		{% endif %}
+		<div id="textdata">{{textdata.current}}</div>
 		{% if textdata.story.count >= 1 %}
 		<div id="seriesnav">
 			{% if textdata.story.chapter > 1 %}
@@ -108,6 +153,40 @@
 				</div>
 				{% endif %}
 			</div>
+		{% endif %}
+	</div>
+		{% if user %}
+	<div id="editmain">
+		<div id="editbuttons">
+		<span class="removertfbutton">
+			<a href="javascript:removeRTF();">Remove RTF Encoding</a>
+		</span>
+		<span class="savebutton">
+			<a href="javascript:doSaveChanges();">Save changes</a>
+		</span>
+		<span class="revertbutton">
+			<a href="javascript:doRevertChanges();">Revert to previous version</a>
+		</span>
+		<span class="donewitheditsbutton">
+			<a href="javascript:switchToDisplayMode();">Done editing</a>
+		</span>
+		</div>
+		<form name="editdoc" method="post" action="/save">
+			<input type="hidden" name="id" value="{{textdata._id.toString()}}"/>
+		<div id="edittexttitle">
+			<div class="editfieldheader">Title:</div>
+			<input name="texttitle" length="80" value="{{textdata.title}}"/>
+		</div>
+		<div id="edittextsummary">
+			<div class="editfieldheader">Summary:</div>
+			<textarea name="textsummary" rows="5" cols="80">{{textdata.summary}}</textarea>
+		</div>
+		<div id="edittextdata">
+			<div class="editfieldheader">Body:</div>
+			<textarea name="textdata" rows="20" cols="80">{{textdata.current}}</textarea>
+		</div>
+		</form>	
+	</div>
 		{% endif %}
 	{% endif %}
 {% endblock %}

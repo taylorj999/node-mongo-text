@@ -6,7 +6,6 @@ function addTag(id) {
 			 'id': id
 		    ,'newtag': newtag
 		},
-		async: false,
 		dataType: "jsonp",
 		success: function(data) {
 			if (data.status === "success") {
@@ -30,11 +29,10 @@ function deleteTag(id, tag) {
 			 'id': id
 		    ,'tag': tag
 		},
-		async: false,
 		dataType: "jsonp",
 		success: function(data) {
 			if (data.status === "success") {
-				tagdiv = "#"+data.tag;
+				var tagdiv = "#"+data.tag;
 				$(tagdiv).remove();
 			} else {
 				$("#alert").append("Error from API: " + data.error);
@@ -53,7 +51,6 @@ function deleteDocument(id, tag) {
 		data: {
 			 'id': id
 		},
-		async: false,
 		dataType: "jsonp",
 		success: function(data) {
 			if (data.status === "success") {
@@ -75,7 +72,6 @@ function unDeleteDocument(id, tag) {
 		data: {
 			 'id': id
 		},
-		async: false,
 		dataType: "jsonp",
 		success: function(data) {
 			if (data.status === "success") {
@@ -109,7 +105,6 @@ function setSequence(id) {
 			,'sequence':sequence
 			,'series_name':series_name
 		},
-		async: false,
 		dataType: "jsonp",
 		success: function(data) {
 			if (data.status === "success") {
@@ -123,4 +118,52 @@ function setSequence(id) {
 		}
 	});
 	return false;
+}
+
+function saveDocument(id, textbody, textsummary, texttitle) {
+	return $.ajax({
+		url: "/savedocument-api",
+		data: {
+			 'id': id,
+			 'textdata': textbody,
+			 'textsummary': textsummary,
+			 'texttitle': texttitle
+		},
+		type: "post",
+		dataType: "jsonp",
+		success: function(data) {
+			if (data.status === "success") {
+				return data;
+			} else {
+				$("#alert").append("Error from API: " + data.error);
+				return null;
+			}
+		},
+		error: function(xhr,textStatus,errorThrown) {
+			$("#alert").append("Error on Ajax call:" + xhr.responseText);
+			return null;
+		}
+	});
+}
+
+function revertDocument(id) {
+	return $.ajax({
+		url: "/revertdocument-api",
+		data: {
+			 'id': id
+		},
+		dataType: "jsonp",
+		success: function(data) {
+			if (data.status === "success") {
+				return data;
+			} else {
+				$("#alert").append("Error from API: " + data.error);
+				return null;
+			}
+		},
+		error: function(xhr,textStatus,errorThrown) {
+			$("#alert").append("Error on Ajax call:" + textStatus);
+			return null;
+		}
+	});
 }

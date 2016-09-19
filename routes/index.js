@@ -128,120 +128,7 @@ module.exports = exports = function(app, db, passport) {
 			});
 		}
 	});
-	
-	app.post('/edit', function(req,res) {
-		var textstore = new Textstore(db);
-		if ((req.body.id === undefined)) {
-			res.render('editdoc',{'error':'Invalid parameter error'});
-		}  else {
-			textstore.getDocument(sanitize(req.body.id).toLowerCase(), function(err,result) {
-				if (result.value) {
-					if (result.value.current !== undefined) {
-						result.value.current = striptags(result.value.current);
-					}
-				}
-				if (err) {
-					res.render('editdoc',{'error':err.message
-								   	   ,'textdata':result.value
-								       ,'user':req.user
-								       ,'config':config.site});
-				    return;
-			    } else {
-				    res.render('editdoc',{'textdata':result.value
-								       ,'user':req.user
-								       ,'config':config.site});
-				    return;
-			    }
-			});
-		}
-	});
-	app.get('/edit', function(req,res) {
-		var textstore = new Textstore(db);
-		if ((req.query.id === undefined)) {
-			res.render('editdoc',{'error':'Invalid parameter error'});
-		}  else {
-			textstore.getDocument(sanitize(req.query.id).toLowerCase(), function(err,result) {
-				if (result.value) {
-					if (result.value.current !== undefined) {
-						result.value.current = striptags(result.value.current);
-					}
-				}
-				if (err) {
-					res.render('editdoc',{'error':err.message
-								   	   ,'textdata':result.value
-								       ,'user':req.user
-								       ,'config':config.site});
-				    return;
-			    } else {
-				    res.render('editdoc',{'textdata':result.value
-								       ,'user':req.user
-								       ,'config':config.site});
-				    return;
-			    }
-			});
-		}
-	});
-	
-	app.post('/save',function(req,res) {
-		var textstore = new Textstore(db);
-		if ((req.body.id === undefined)) {
-			res.render('editdoc',{'error':'Invalid parameter error, save aborted'});
-		}  else {
-			textstore.updateDocument(sanitize(req.body.id).toLowerCase(),
-									 req.body.textdata,
-									 req.body.textsummary,
-									 function(err, result) {
-				if (result.value) {
-					if (result.value.current !== undefined) {
-						result.value.current = striptags(result.value.current);
-					}
-				}
-				if (err) {
-					res.render('editdoc',{'error':err.message
-								   	   ,'textdata':result.value
-								       ,'user':req.user
-								       ,'config':config.site});
-				    return;
-			    } else {
-				    res.render('editdoc',{'message':'Changes saved.'
-				    					 ,'textdata':result.value
-								         ,'user':req.user
-								         ,'config':config.site});
-				    return;
-			    }
-			});
-		}
-	});
-	
-	app.get('/revert',function(req,res) {
-		var textstore = new Textstore(db);
-		if ((req.query.id === undefined)) {
-			res.render('editdoc',{'error':'Invalid parameter error, revert aborted'});
-		}  else {
-			textstore.revertDocument(sanitize(req.query.id).toLowerCase(),
-									 function(err, result) {
-				if (result.value) {
-					if (result.value.current !== undefined) {
-						result.value.current = striptags(result.value.current);
-					}
-				}
-				if (err) {
-					res.render('editdoc',{'error':err.message
-								   	   ,'textdata':result.value
-								       ,'user':req.user
-								       ,'config':config.site});
-				    return;
-			    } else {
-				    res.render('editdoc',{'message':'Changes reverted.'
-				    					 ,'textdata':result.value
-								         ,'user':req.user
-								         ,'config':config.site});
-				    return;
-			    }
-			});
-		}
-	});
-	
+			
 	app.get('/addtag-api', function(req,res) {
 		if ((req.query.id === undefined)||(req.query.newtag === undefined)) {
 			res.jsonp({'status':'error','error':'Invalid parameter error.'});
@@ -405,6 +292,71 @@ module.exports = exports = function(app, db, passport) {
 		});
 	});
 
+	app.post('/savedocument-api', function(req,res) {
+		if (req.body.id === undefined || req.body.textdata === undefined 
+		 || req.body.textsummary === undefined || req.body.texttitle === undefined) {
+			res.jsonp({'status':'error','error':'Invalid parameter error: empty values.'});
+			return;
+		} else {
+			var textstore = new Textstore(db);
+			textstore.updateDocument(sanitize(req.body.id).toLowerCase(),
+					 req.body.textdata,
+					 req.body.textsummary,
+					 req.body.texttitle,
+					 function(err, result) {
+				if (result.value) {
+					if (result.value.current !== undefined) {
+						result.value.current = striptags(result.value.current);
+					}
+				}
+				if (err) {
+					res.jsonp({'status':'error','error':err.message});
+				    return;
+			    } else {
+			    	if (!result.value) {
+			    		res.jsonp({'status':'error','error':'Error getting document from database: no document found'});
+			    		return;
+			    	}
+			    	res.jsonp({'status':'success',
+			    			   'title':result.value.title,
+			    			   'summary':result.value.summary,
+			    			   'body':result.value.current});
+				    return;
+			    }
+			});
+		}
+	});
+	
+	app.get('/revertdocument-api', function(req,res) {
+		if (req.query.id === undefined) {
+			res.jsonp({'status':'error','error':'Invalid parameter error: empty id value.'});
+			return;
+		} else {
+			var textstore = new Textstore(db);
+			textstore.revertDocument(sanitize(req.query.id).toLowerCase(),
+					 function(err, result) {
+				if (result.value) {
+					if (result.value.current !== undefined) {
+						result.value.current = striptags(result.value.current);
+					}
+				}
+				if (err) {
+					res.jsonp({'status':'error','error':err.message});
+				    return;
+			    } else {
+			    	if (!result.value) {
+			    		res.jsonp({'status':'error','error':'Error getting document from database: no document found'});
+			    		return;
+			    	}
+			    	res.jsonp({'status':'success',
+			    			   'title':result.value.title,
+			    			   'summary':result.value.summary,
+			    			   'body':result.value.current});
+				    return;
+			    }
+			});
+		}
+	});
 };
 
 
@@ -435,7 +387,7 @@ function doSearch(query_params,req,res,db) {
 					                   limit, function(err, data, count, taglist) {
 				if (err) {
 					res.render('searchresults',{'error':err.message 
-									 	,'images':{}
+									 	,'fulltext':{}
 									 	,'user':req.user});
 					return;
 				} else {
