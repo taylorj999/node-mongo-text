@@ -18,7 +18,7 @@
 	    "express": "3.2.x",
 	    "express-caja-sanitizer": "latest",
 	    "striptags": "latest",
-	    "mongodb": "2.0.x",
+	    "mongodb": "~2.2.x",
 	    "consolidate": "~0.9.1",
 	    "swig": "1.4.x",
 	    "passport": "~0.1.17",
