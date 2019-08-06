@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "node-mongo-text",
   "scripts": {
-    "start" : "node app.js"
+    "start": "node app.js"
   },
   "repository": "",
   "keywords": [
@@ -15,17 +15,20 @@
   "license": "MIT",
   "readmeFilename": "README.md",
   "dependencies": {
-	    "express": "3.2.x",
-	    "express-caja-sanitizer": "latest",
-	    "striptags": "latest",
-	    "mongodb": "~2.2.x",
-	    "consolidate": "~0.9.1",
-	    "swig": "1.4.x",
-	    "passport": "~0.1.17",
-	    "passport-local": "~0.1.6",
-	    "connect-flash" : "~0.1.1",
-	    "bcrypt-nodejs": "latest",
-	    "async" : "*",
-	    "validator" : "3.16.x"
+    "async": "^2.6.2",
+    "bcrypt-nodejs": "latest",
+    "body-parser": "~1.19.0",
+    "connect-flash": "~0.1.1",
+    "connect-mongodb-session": "~2.2.0",
+    "consolidate": "~0.9.1",
+    "express": "~4.17.1",
+    "express-caja-sanitizer": "latest",
+    "express-session": "~1.16.2",
+    "mongodb": "^2.2.36",
+    "passport": "~0.1.17",
+    "passport-local": "~0.1.6",
+    "striptags": "^3.1.1",
+    "swig": "1.4.x",
+    "validator": "3.22.x"
   }
 }
