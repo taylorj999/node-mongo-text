@@ -23,8 +23,8 @@ $( document ).ready(function() {
 
 {% block leftcolumn %}
 	<div class="taglist">
-	{% for tag in taglist.sort() %}
-		<div class="tag" id="{{tag}}"><a href="/search?tags={{tag}}&page=1">{{tag}}</a></div>
+	{% for tag in taglist %}
+		<div class="tag" id="{{tag._id}}"><a href="/search?tags={{tag._id}}&page=1">{{tag._id}}</a></div>
 	{% endfor %}
 	</div>
 {% endblock %}
