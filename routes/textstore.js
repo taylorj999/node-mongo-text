@@ -98,7 +98,7 @@ Textstore.prototype.buildQueryOptions = function buildQueryOptions(page,textsear
 	var sort_options = {};
 	var skip = 0;
 	var limit = config.site.resultsPerPage;
-	var return_vals = {'title':1,'tags':1,'summary':1,'date':1,'last_viewed':1,'story.chapter':1};
+	var return_vals = {'title':1,'tags':1,'summary':1,'original_date':1,'last_viewed':1,'story.chapter':1};
 	
 	if (page !== undefined) {
 		if (!isNaN(page)) {
@@ -132,7 +132,7 @@ Textstore.prototype.buildQueryOptions = function buildQueryOptions(page,textsear
 				break;
 			case "recent":
 			default:
-				sort_options["date"] = -1;
+				sort_options["original_date"] = -1;
 				break;
 		}
 	}
@@ -191,6 +191,21 @@ Textstore.prototype.updateDocument = function updateDocument(text_id, new_text, 
 		}
 	});
 };
+
+Textstore.prototype.newDocument = function newDocument(new_text, new_summary, new_title, callback) {
+	var textdata = this.textdata;
+	textdata.insertOne({'current':new_text,'summary':new_summary,'title':new_title,new:false,
+		                'original_date':new Date(),'last_viewed':new Date()},
+			           function(err,res) {
+						  if (err) {
+							  return callback(err);
+						  } else {
+							  console.dir(res);
+							  return callback(null,res);
+						  }
+					   });
+};
+
 
 Textstore.prototype.revertDocument = function updateDocument(text_id, callback) {
 	var textdata = this.textdata;
