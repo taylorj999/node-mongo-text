@@ -118,7 +118,7 @@ Textstore.prototype.buildQueryOptions = function buildQueryOptions(page,textsear
 	
 	// order by stuff here
 	if (orderby === undefined) {
-		sort_options["date"] = -1;
+		sort_options["original_date"] = -1;
 	} else {
 		switch (orderby) {
 			case "last":
