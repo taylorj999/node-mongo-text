@@ -200,7 +200,6 @@ Textstore.prototype.newDocument = function newDocument(new_text, new_summary, ne
 						  if (err) {
 							  return callback(err);
 						  } else {
-							  console.dir(res);
 							  return callback(null,res);
 						  }
 					   });
