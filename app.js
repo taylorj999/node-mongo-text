@@ -20,9 +20,11 @@ var express = require('express')
   , MongoDBStore = require('connect-mongodb-session')(expressSession);
 
 
-MongoClient.connect(config.system.mongoConnectString, function(err, db) {
+MongoClient.connect(config.system.mongoConnectString, { useUnifiedTopology: true }, function(err, client) {
     "use strict";
     if(err) throw err;
+    
+    var db = client.db();
 
     // load passport configuration
     require('./config/passport')(passport,db);
