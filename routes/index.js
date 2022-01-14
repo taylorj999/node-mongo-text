@@ -128,7 +128,11 @@ module.exports = exports = function(app, db, passport) {
 			});
 		}
 	});
-			
+	
+	app.get('/addnew', function(req,res) {
+		res.render('addnew',{'user':req.user,'config':config.site});
+	});
+	
 	app.get('/addtag-api', function(req,res) {
 		if ((req.query.id === undefined)||(req.query.newtag === undefined)) {
 			res.jsonp({'status':'error','error':'Invalid parameter error.'});
@@ -326,6 +330,35 @@ module.exports = exports = function(app, db, passport) {
 			});
 		}
 	});
+
+	app.post('/newdocument-api', function(req,res) {
+		if (req.body.textdata === undefined 
+		 || req.body.textsummary === undefined || req.body.texttitle === undefined) {
+			res.jsonp({'status':'error','error':'Invalid parameter error: empty values.'});
+			return;
+		} else {
+			var textstore = new Textstore(db);
+			textstore.newDocument(req.body.textdata,
+					 req.body.textsummary,
+					 req.body.texttitle,
+					 function(err, result) {
+				if (err) {
+					res.jsonp({'status':'error','error':err.message});
+				    return;
+			    } else {
+			    	if (result.insertedId === null) {
+			    		res.jsonp({'status':'error','error':'Error getting document from database: no document found'});
+			    		return;
+			    	}
+			    	
+			    	res.jsonp({'status':'success',
+			    			   'id':result.insertedId});
+				    return;
+			    }
+			});
+		}
+	});
+
 	
 	app.get('/revertdocument-api', function(req,res) {
 		if (req.query.id === undefined) {

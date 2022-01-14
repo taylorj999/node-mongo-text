@@ -146,6 +146,31 @@ function saveDocument(id, textbody, textsummary, texttitle) {
 	});
 }
 
+function insertNewDocument(textbody, textsummary, texttitle) {
+	return $.ajax({
+		url: "/newdocument-api",
+		data: {
+			 'textdata': textbody,
+			 'textsummary': textsummary,
+			 'texttitle': texttitle
+		},
+		type: "post",
+		dataType: "jsonp",
+		success: function(data) {
+			if (data.status === "success") {
+				return data;
+			} else {
+				$("#alert").append("Error from API: " + data.error);
+				return null;
+			}
+		},
+		error: function(xhr,textStatus,errorThrown) {
+			$("#alert").append("Error on Ajax call:" + xhr.responseText);
+			return null;
+		}
+	});
+}
+
 function revertDocument(id) {
 	return $.ajax({
 		url: "/revertdocument-api",

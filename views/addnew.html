@@ -1,0 +1,83 @@
+{% extends 'frametemplate.html' %}
+
+{% block title %}Document{% endblock %}
+
+{% block header %}
+<script type="text/javascript" src="/js/edit-api.js"></script>
+	{% if user %}
+<script type="text/javascript" src="/js/rtf-converters.js"></script>
+<script type="text/javascript">
+function switchToEditMode() {
+	$("#displaymain").hide();
+	$("#editmain").show();
+}
+
+function switchToDisplayMode() {
+	$("#editmain").hide();
+	$("#displaymain").show();
+}
+
+function removeRTF() {
+	var textConverter = new TextConverter();
+	$("textarea[name=textdata]").val(textConverter.convert($("textarea[name=textdata]").val()));
+}
+
+function doSaveChanges() {
+	insertNewDocument($("textarea[name=textdata]").val(),
+	             $("textarea[name=textsummary]").val(),
+	             $("input[name=texttitle]").val()).done(function(data) {
+		if (data && (data.status === "success")) {
+		}
+	});
+}
+
+function doRevertChanges() {
+	revertDocument('{{textdata._id.toString()}}').done(function(data) {
+		if (data && (data.status === "success")) {
+			$("input[name=texttitle]").val(data.title);
+			$("textarea[name=textdata]").val(data.body);
+			$("textarea[name=textsummary]").val(data.summary);
+			$("#textdata").html(data.body);
+		}
+	});
+}
+</script>
+	{% endif %}
+{% endblock %}
+
+{% block leftcolumn %}
+{% endblock %}
+
+{% block main %}
+	<div id="alert">{{error}}</div>
+		{% if user %}
+	<div id="displaymain">
+		<div id="editbuttons">
+		<span class="removertfbutton">
+			<a href="javascript:removeRTF();">Remove RTF Encoding</a>
+		</span>
+		<span class="savebutton">
+			<a href="javascript:doSaveChanges();">Save changes</a>
+		</span>
+		<span class="revertbutton">
+			<a href="javascript:doRevertChanges();">Revert to previous version</a>
+		</span>
+		</div>
+		<form name="editdoc" method="post" action="/save">
+			<input type="hidden" name="id" value="{{textdata._id.toString()}}"/>
+		<div id="edittexttitle">
+			<div class="editfieldheader">Title:</div>
+			<input name="texttitle" length="80" value="{{textdata.title}}"/>
+		</div>
+		<div id="edittextsummary">
+			<div class="editfieldheader">Summary:</div>
+			<textarea name="textsummary" rows="5" cols="80">{{textdata.summary}}</textarea>
+		</div>
+		<div id="edittextdata">
+			<div class="editfieldheader">Body:</div>
+			<textarea name="textdata" rows="20" cols="80">{{textdata.current}}</textarea>
+		</div>
+		</form>	
+	</div>
+		{% endif %}
+{% endblock %}

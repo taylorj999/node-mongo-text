@@ -98,7 +98,7 @@ Textstore.prototype.buildQueryOptions = function buildQueryOptions(page,textsear
 	var sort_options = {};
 	var skip = 0;
 	var limit = config.site.resultsPerPage;
-	var return_vals = {'title':true,'tags':true,'summary':true};
+	var return_vals = {'title':1,'tags':1,'summary':1,'original_date':1,'last_viewed':1,'story.chapter':1};
 	
 	if (page !== undefined) {
 		if (!isNaN(page)) {
@@ -118,7 +118,7 @@ Textstore.prototype.buildQueryOptions = function buildQueryOptions(page,textsear
 	
 	// order by stuff here
 	if (orderby === undefined) {
-		sort_options["date"] = -1;
+		sort_options["original_date"] = -1;
 	} else {
 		switch (orderby) {
 			case "last":
@@ -132,7 +132,7 @@ Textstore.prototype.buildQueryOptions = function buildQueryOptions(page,textsear
 				break;
 			case "recent":
 			default:
-				sort_options["date"] = -1;
+				sort_options["original_date"] = -1;
 				break;
 		}
 	}
@@ -140,39 +140,31 @@ Textstore.prototype.buildQueryOptions = function buildQueryOptions(page,textsear
 	callback(sort_options, return_vals, skip, limit);
 };
 
-// The skip and limit were moved to cursor operations as opposed to passing them as 
-// options to find() because of a weird behavior/bug in the NodeJS MongoDB v2.0.55 driver
-// that was not ignoring the skip() and limit() functions when doing a count() on the find
-// results.
-
 Textstore.prototype.getSearchResults = function getSearchResults(params, sort_options, 
 																 return_vals, skip, 
 																 limit, callback) {
-	var textdata = this.textdata;
-	var searchresults = textdata.find(params,return_vals).sort(sort_options);
-	searchresults.count(function(err,count) {
-		if (err) {
-			return callback(err);
-		} else if (count===0) {
-			return callback(null,null,0);
-		} else {
-			searchresults.skip(skip).limit(limit).toArray(function(err,results) {
-				if (err) {
-					return callback(err);
-				} else {
-					var taglist = {};
-					for (x=0;x<results.length;x++) {
-						if (results[x].tags !== undefined) {
-							for(y=0;y<results[x].tags.length;y++) {
-								taglist[results[x].tags[y]]=1;
-							}
-						}
-					}
-					callback(err,results,count,Object.keys(taglist));
-				}
-			});
-		}
-	});
+	var self = this;
+	// the aggregation pipeline generates 3 data facets: 'data' the actual search results after skip/limit
+	// 'taglist' the list of tags found in the search results after skip/limit
+	// 'count' the total number of search results (used for pagination)
+	
+	self.textdata.aggregate([{'$match':params},
+	                         {'$project':return_vals},
+	                         {'$sort':sort_options},
+	                         {'$facet':
+	                           {
+	                    	   'data': [{'$match':{}},{'$skip':skip},{'$limit':limit}],
+	                    	   'taglist': [{'$skip':skip},{'$limit':limit},{'$unwind':'$tags'},{'$sortByCount':'$tags'} ],
+	                    	   'count': [{'$group':{'_id':null,'count':{'$sum':1}}}]
+	                    	   }
+	                         }])
+	                         .toArray(function(err,results) {
+	                    	   if (err) {
+	                    		 return callback(err);
+	                    	   } else {
+	                    		 callback(err,results[0].data,results[0].count[0].count,results[0].taglist);
+	                    	   }
+	                         });
 };
 
 Textstore.prototype.getDocument = function getDocument(text_id, callback) {
@@ -199,6 +191,20 @@ Textstore.prototype.updateDocument = function updateDocument(text_id, new_text, 
 		}
 	});
 };
+
+Textstore.prototype.newDocument = function newDocument(new_text, new_summary, new_title, callback) {
+	var textdata = this.textdata;
+	textdata.insertOne({'current':new_text,'summary':new_summary,'title':new_title,new:false,
+		                'original_date':new Date(),'last_viewed':new Date()},
+			           function(err,res) {
+						  if (err) {
+							  return callback(err);
+						  } else {
+							  return callback(null,res);
+						  }
+					   });
+};
+
 
 Textstore.prototype.revertDocument = function updateDocument(text_id, callback) {
 	var textdata = this.textdata;
